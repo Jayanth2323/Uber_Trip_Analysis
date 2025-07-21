@@ -2,55 +2,44 @@
 
 from fastapi import FastAPI
 from pydantic import BaseModel
-from typing import List, Optional
 import numpy as np
-import pickle
-import os
+from app.model import load_model
 
-# Initialize FastAPI app
 app = FastAPI(
     title="Uber Trip Forecasting API",
-    description="Predict Uber trip demand using trained ML models.",
+    description="Forecast daily Uber trip counts using FOIL dataset features.",
     version="1.0.0",
 )
 
-# Define request structure using Pydantic
 class TripFeatures(BaseModel):
-    hour: int
+    hour: int         # Usually 0 for FOIL
     day: int
     day_of_week: int
     month: int
-    lat: float
-    lon: float
-    base_code: Optional[str] = None
+    active_vehicles: int
 
-# Load model on startup
-MODEL_PATH = os.path.join("models", "xgb_model.pkl")
-
+# Load model
 try:
-    with open(MODEL_PATH, "rb") as f:
-        model = pickle.load(f)
-except FileNotFoundError:
+    model = load_model()
+except Exception as e:
     model = None
-    print("⚠️ Warning: Model not found. Please train and save model at:", MODEL_PATH)
+    print("⚠️ Model load error:", e)
 
-# Health check
 @app.get("/")
 def root():
-    return {"message": "🚀 Uber Trip Forecasting API is up and running!"}
+    return {"message": "🚀 Uber FOIL Trip Forecasting API is running!"}
 
-# Prediction endpoint
 @app.post("/predict")
-def predict_trip_demand(features: TripFeatures):
+def predict_trips(features: TripFeatures):
     if not model:
-        return {"error": "Model not loaded. Please upload trained model to 'models/xgb_model.pkl'."}
+        return {"error": "❌ Model not loaded."}
 
-    input_array = np.array([[features.hour, features.day, features.day_of_week, features.month,
-                             features.lat, features.lon]])
-
-    prediction = model.predict(input_array)[0]
+    input_data = np.array([[features.hour, features.day, features.day_of_week,
+                            features.month, features.active_vehicles]])
+    
+    prediction = model.predict(input_data)[0]
 
     return {
-        "predicted_trip_count": round(prediction, 2),
+        "predicted_trips": round(prediction, 2),
         "inputs": features.dict()
     }
