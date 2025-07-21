@@ -1,1 +1,44 @@
-/venv
+# --- Virtual Environments ---
+venv/
+.venv/
+
+# --- Python bytecode ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# --- Data and Models ---
+data/
+models/
+
+# --- Jupyter Notebook checkpoints ---
+.ipynb_checkpoints/
+
+# --- Environment files ---
+.env
+.env.*
+
+# --- IDE & Editor folders ---
+.vscode/
+.idea/
+
+# --- OS-specific files ---
+.DS_Store
+Thumbs.db
+
+# --- Logs & Temporary files ---
+*.log
+*.tmp
+
+# --- Dependency lock files (ignore if you commit them elsewhere) ---
+Pipfile.lock
+poetry.lock
+
+# --- Docker ---
+*.dockerignore
+Dockerfile
+
+# --- Miscellaneous backups ---
+*.bak
+*~
