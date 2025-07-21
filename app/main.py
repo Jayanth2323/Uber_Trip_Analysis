@@ -29,17 +29,36 @@ except Exception as e:
 def root():
     return {"message": "🚀 Uber FOIL Trip Forecasting API is running!"}
 
+# @app.post("/predict")
+# def predict_trips(features: TripFeatures):
+#     if not model:
+#         return {"error": "❌ Model not loaded."}
+
+#     input_data = np.array([[features.hour, features.day, features.day_of_week,
+#                             features.month, features.active_vehicles]])
+    
+#     prediction = model.predict(input_data)[0]
+
+#     return {
+#         "predicted_trips": round(prediction, 2),
+#         "inputs": features.dict()
+#     }
 @app.post("/predict")
 def predict_trips(features: TripFeatures):
     if not model:
         return {"error": "❌ Model not loaded."}
 
-    input_data = np.array([[features.hour, features.day, features.day_of_week,
-                            features.month, features.active_vehicles]])
-    
-    prediction = model.predict(input_data)[0]
+    try:
+        input_data = np.array([[features.hour, features.day, features.day_of_week,
+                                features.month, features.active_vehicles]])
+        print("📊 Input shape:", input_data.shape)
+        print("📊 Input data:", input_data)
 
-    return {
-        "predicted_trips": round(prediction, 2),
-        "inputs": features.dict()
-    }
+        prediction = model.predict(input_data)[0]
+        return {
+            "predicted_trips": round(prediction, 2),
+            "inputs": features.dict()
+        }
+    except Exception as e:
+        print("❌ Prediction error:", str(e))
+        return {"error": str(e)}
