@@ -6,7 +6,7 @@ import os
 
 # === CONFIG ===
 MODEL_PATH = "./models/xgb_model.pkl"
-DATA_PATH = "./data/Uber-Jan-Feb-FOIL.csv"   
+DATA_PATH = "data/uber_processed.csv"   
 OUTPUT_PATH = "plots/shap_summary.png"
 FEATURES = ['dispatching_base_number', 'date', 'trips', 'active_vehicles']
 
