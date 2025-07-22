@@ -50,3 +50,11 @@ def predict_trips(features: TripFeatures):
         import traceback
         traceback.print_exc()
         return {"error": str(e)}
+        
+@app.get("/health")
+def health_check():
+    return {
+        "model_loaded": model is not None,
+        "status": "✅ Model is ready!" if model else "❌ Model failed to load."
+    }
+
