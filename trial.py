@@ -1,26 +1,25 @@
-# app/main.py
-
 import os
 import numpy as np
 from fastapi import FastAPI
 from pydantic import BaseModel
-from app.model import load_model
 from fastapi.responses import FileResponse
+from app.model import load_model
 
 app = FastAPI(
     title="Uber Trip Forecasting API",
-    description="Forecast daily Uber trip counts using FOIL dataset features.",
+    description="Forecast hourly Uber trip counts and serve analysis plots.",
     version="1.0.0",
 )
 
+# === Prediction Schema ===
 class TripFeatures(BaseModel):
-    hour: int         # Usually 0 for FOIL
-    day: int
-    day_of_week: int
-    month: int
+    hour: int         # 0-23
+    day: int          # 1-31
+    day_of_week: int  # 0-6
+    month: int        # 1-12
     active_vehicles: int
 
-# Load model
+# === Load Model ===
 try:
     model = load_model()
 except Exception as e:
@@ -29,36 +28,24 @@ except Exception as e:
 
 @app.get("/")
 def root():
-    return {"message": "🚀 Uber FOIL Trip Forecasting API is running!"}
+    return {"message": "🚀 Uber Trip Forecasting API is running!"}
 
 @app.post("/predict")
 def predict_trips(features: TripFeatures):
     if not model:
         return {"error": "Model not loaded."}
-
+    data = np.array([[features.hour, features.day, features.day_of_week,
+                      features.month, features.active_vehicles]])
     try:
-        input_data = np.array([[features.hour, features.day, features.day_of_week,
-                                features.month, features.active_vehicles]])
-
-        prediction = model.predict(input_data)[0]
-        prediction = float(prediction)  # ✅ Convert from np.float32 to native float
-
-        return {
-            "predicted_trips": round(prediction, 2),
-            "inputs": features.dict()
-        }
-
+        pred = float(model.predict(data)[0])
+        return {"predicted_trips": round(pred, 2), "inputs": features.dict()}
     except Exception as e:
-        import traceback
-        traceback.print_exc()
         return {"error": str(e)}
-        
+
 @app.get("/health")
 def health_check():
-    return {
-        "model_loaded": model is not None,
-        "status": "✅ Model is ready!" if model else "❌ Model failed to load."
-    }
+    return {"model_loaded": model is not None,
+            "status": "✅ Model is ready!" if model else "❌ Model failed to load."}
 
 # === Metrics ===
 model_metrics = {
