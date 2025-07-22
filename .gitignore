@@ -8,10 +8,6 @@ __pycache__/
 *.pyo
 *.pyd
 
-# --- Data and Models ---
-data/
-models/
-
 # --- Jupyter Notebook checkpoints ---
 .ipynb_checkpoints/
 
