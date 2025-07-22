@@ -6,9 +6,9 @@ import os
 
 # === CONFIG ===
 MODEL_PATH = "./models/xgb_model.pkl"
-DATA_PATH = "data/Uber_Jan_Feb_FOIL.csv"   # Replace with your actual final CSV
+DATA_PATH = "./data/Uber-Jan-Feb-FOIL.csv"   
 OUTPUT_PATH = "plots/shap_summary.png"
-FEATURES = ['hour', 'day', 'day_of_week', 'month', 'active_vehicles']
+FEATURES = ['dispatching_base_number', 'date', 'trips', 'active_vehicles']
 
 # === Ensure plots dir exists ===
 os.makedirs("plots", exist_ok=True)
