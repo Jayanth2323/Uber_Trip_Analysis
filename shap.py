@@ -5,7 +5,7 @@ import joblib
 import os
 
 # === CONFIG ===
-MODEL_PATH = "./models/xbg_model.pkl"
+MODEL_PATH = "./models/xgb_model.pkl"
 DATA_PATH = "data/Uber_Jan_Feb_FOIL.csv"   # Replace with your actual final CSV
 OUTPUT_PATH = "plots/shap_summary.png"
 FEATURES = ['hour', 'day', 'day_of_week', 'month', 'active_vehicles']
