@@ -58,3 +58,11 @@ def health_check():
         "status": "✅ Model is ready!" if model else "❌ Model failed to load."
     }
 
+@app.get("/explain")
+def get_shap_plot():
+    plot_path = os.path.join("plots", "shap_summary.png")
+    if os.path.exists(plot_path):
+        return FileResponse(plot_path, media_type="image/png")
+    return {"error": "SHAP plot not found. Please generate it first."}
+
+
