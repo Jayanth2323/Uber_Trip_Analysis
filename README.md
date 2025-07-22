@@ -2,10 +2,6 @@
 
 **Forecasting hourly Uber trip counts using ML models like XGBoost, Random Forest, GBRT, and an Ensemble.**
 
-
-
-
-
 ---
 
 ## 📌 Project Overview
