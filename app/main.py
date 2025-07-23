@@ -87,6 +87,7 @@ PLOT_FILES = {
     "trips_per_day": "trips_per_day.png",
     "decomposition": "decomposition.png",
     "train_test_split": "train_test_split.png",
+    "xgb_vs_actual": "xgb_vs_actual.png",
     # add other plot filenames here as generated
 }
 

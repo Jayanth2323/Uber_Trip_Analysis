@@ -53,3 +53,20 @@ plt.savefig("plots/train_test_split.png")
 plt.close()
 
 print("✅ Saved: plots/train_test_split.png")
+
+# === XGBoost Predictions vs Actual ===
+xgb_df = pd.read_csv("data/xgb_predictions.csv")
+xgb_df['date'] = pd.to_datetime(xgb_df['date'])
+
+plt.figure(figsize=(12, 6))
+plt.plot(xgb_df['date'], xgb_df['actual'], label='Actual Trips', color='black')
+plt.plot(xgb_df['date'], xgb_df['predicted_xgb'], label='XGBoost Prediction', color='orange')
+plt.title("XGBoost Prediction vs Actual")
+plt.xlabel("Date")
+plt.ylabel("Trips")
+plt.legend()
+plt.tight_layout()
+plt.savefig("plots/xgb_vs_actual.png")
+plt.close()
+
+print("✅ Saved: plots/xgb_vs_actual.png")
