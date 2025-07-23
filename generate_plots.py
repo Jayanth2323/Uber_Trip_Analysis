@@ -84,7 +84,18 @@ split_date = pd.Timestamp('2015-06-01')
 
 fig_split = go.Figure()
 fig_split.add_trace(go.Scatter(x=ts.index, y=ts.values, name="Trips", line=dict(color="skyblue")))
-fig_split.add_vline(x=split_date, line=dict(dash="dash", color="red"), annotation_text="Train/Test Split")
+fig_split.add_vline(x=split_date, line_dash="dash", line_color="red")
+
+# Add annotation separately
+fig_split.add_annotation(
+    x=split_date,
+    y=ts.max(),
+    text="Train/Test Split",
+    showarrow=True,
+    arrowhead=1,
+    ax=0,
+    ay=-40
+)
 fig_split.update_layout(title="Train/Test Split on Uber Trip Data", xaxis_title="Date", yaxis_title="Trips per Hour")
 pio.write_html(fig_split, file="plots/train_test_split.html", auto_open=False)
 print("✅ Saved: plots/train_test_split.html")
