@@ -89,3 +89,20 @@ plt.savefig("plots/rf_vs_actual.png")
 plt.close()
 
 print("✅ Saved: plots/rf_vs_actual.png")
+
+# === Ensemble Predictions vs Actual ===
+ens_df = pd.read_csv("data/xgb_predictions.csv")
+ens_df['date'] = pd.to_datetime(ens_df['date'])
+
+plt.figure(figsize=(12, 6))
+plt.plot(ens_df['date'], ens_df['actual'], label='Actual Trips', color='black')
+plt.plot(ens_df['date'], ens_df['predicted_ensemble'], label='Ensemble Prediction', color='green')
+plt.title("Ensemble Prediction vs Actual")
+plt.xlabel("Date")
+plt.ylabel("Trips")
+plt.legend()
+plt.tight_layout()
+plt.savefig("plots/ensemble_vs_actual.png")
+plt.close()
+
+print("✅ Saved: plots/ensemble_vs_actual.png")
