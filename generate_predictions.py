@@ -35,3 +35,18 @@ out_df = pd.DataFrame({
 os.makedirs("data", exist_ok=True)
 out_df.to_csv("data/xgb_predictions.csv", index=False)
 print("✅ Saved: data/xgb_predictions.csv with XGB + RF predictions")
+
+# === Load GBRT model
+gbr_model = joblib.load("models/gbr_model.pkl")
+y_pred_gbr = gbr_model.predict(X_model)
+
+# === Ensemble: weighted average
+y_pred_ensemble = (
+    0.368 * y_pred_xgb +
+    0.322 * y_pred_rf +
+    0.310 * y_pred_gbr
+)
+
+# === Add to DataFrame
+out_df["predicted_gbr"] = y_pred_gbr
+out_df["predicted_ensemble"] = y_pred_ensemble
