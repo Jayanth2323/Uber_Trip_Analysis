@@ -80,7 +80,7 @@ df = pd.read_csv("data/uber_processed.csv")
 df['date'] = pd.to_datetime(df['date'])
 df.set_index('date', inplace=True)
 ts = df['trips'].resample('h').sum()
-split_date = '2015-06-01'
+split_date = pd.Timestamp('2015-06-01')
 
 fig_split = go.Figure()
 fig_split.add_trace(go.Scatter(x=ts.index, y=ts.values, name="Trips", line=dict(color="skyblue")))
