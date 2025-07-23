@@ -2,37 +2,47 @@
 
 import shap
 import pandas as pd
-import matplotlib.pyplot as plt
 import joblib
 import os
+import plotly.express as px
+import plotly.io as pio
 
-# === CONFIG ===
-MODEL_PATH = "./models/xgb_model.pkl"
-DATA_PATH = "./data/uber_processed.csv"
-OUTPUT_PATH = "plots/shap_summary.png"
-
-# ✅ Only include numeric model input features
+# === Config ===
+MODEL_PATH = "models/xgb_model.pkl"
+DATA_PATH = "data/uber_processed.csv"
+OUTPUT_HTML = "plots/shap_summary.html"
 FEATURES = ['hour', 'day', 'day_of_week', 'month', 'active_vehicles']
 
-# === Ensure plots dir exists ===
+# === Ensure output dir exists ===
 os.makedirs("plots", exist_ok=True)
 
-# === Load model ===
+# === Load model and data ===
 model = joblib.load(MODEL_PATH)
-
-# === Load sample data
 df = pd.read_csv(DATA_PATH)
-X = df[FEATURES].tail(100).copy()
-X = X.astype(float)  # Convert to float to avoid dtype issues
+X = df[FEATURES].tail(100).astype(float)
 
-# === Create SHAP explainer
+# === Generate SHAP values ===
 explainer = shap.Explainer(model)
 shap_values = explainer(X)
 
-# === Generate & save summary plot
-plt.figure()
-shap.summary_plot(shap_values, X, show=False)
-plt.savefig(OUTPUT_PATH, bbox_inches="tight")
-plt.close()
+# === Convert to DataFrame
+shap_df = pd.DataFrame(shap_values.values, columns=FEATURES)
 
-print(f"✅ SHAP summary saved to {OUTPUT_PATH}")
+# === Mean absolute SHAP values for bar plot
+mean_abs = shap_df.abs().mean().sort_values(ascending=True)
+
+# === Plot interactive horizontal bar chart
+fig = px.bar(
+    x=mean_abs.values,
+    y=mean_abs.index,
+    orientation='h',
+    title="SHAP Feature Importance",
+    labels={'x': "Mean |SHAP value|", 'y': "Feature"},
+    color=mean_abs.values,
+    color_continuous_scale="Viridis"
+)
+fig.update_layout(template="plotly_white", height=400)
+
+# === Save to HTML
+pio.write_html(fig, file=OUTPUT_HTML, auto_open=False)
+print(f"✅ Saved: {OUTPUT_HTML}")
