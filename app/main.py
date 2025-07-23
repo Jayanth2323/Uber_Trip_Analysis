@@ -52,7 +52,7 @@ def predict_trips(features: TripFeatures):
         import traceback
         traceback.print_exc()
         return {"error": str(e)}
-        
+
 @app.get("/health")
 def health_check():
     return {
@@ -90,12 +90,13 @@ PLOT_FILES = {
     # add other plot filenames here as generated
 }
 
+def _make_endpoint(fname):
+    def _endpoint():
+        p = os.path.join("plots", fname)
+        if os.path.exists(p):
+            return FileResponse(p, media_type="image/png")
+        return {"error": f"Plot {fname} not found."}
+    return _endpoint
+
 for route, filename in PLOT_FILES.items():
-    def _make_endpoint(fname):
-        def _endpoint():
-            p = os.path.join("plots", fname)
-            if os.path.exists(p):
-                return FileResponse(p, media_type="image/png")
-            return {"error": f"Plot {fname} not found."}
-        return _endpoint
-    app.get(f"/plots/{route}")(_make_endpoint(filename))
+    app.add_api_route(f"/plots/{route}", _make_endpoint(filename), methods=["GET"])
