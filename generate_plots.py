@@ -1,3 +1,5 @@
+# generate_plots.py
+
 import pandas as pd
 import matplotlib.pyplot as plt
 from statsmodels.tsa.seasonal import seasonal_decompose
