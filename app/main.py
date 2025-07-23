@@ -28,6 +28,39 @@ except Exception as e:
     print("⚠️ Model load error:", e)
 
 # ✅ Root route: show dashboard with all embedded plots
+# @app.get("/", response_class=HTMLResponse)
+# def dashboard():
+#     plots = [
+#         "trips_per_hour",
+#         "trips_per_day",
+#         "xgb_vs_actual",
+#         "rf_vs_actual",
+#         "ensemble_vs_actual"
+#     ]
+#     html_blocks = ""
+#     for plot in plots:
+#         path = os.path.join("plots", f"{plot}.html")
+#         if os.path.exists(path):
+#             with open(path, "r") as f:
+#                 html_blocks += f.read()
+#         else:
+#             html_blocks += f"<h3>❌ {plot}.html not found</h3>"
+
+#     full_page = f"""
+#     <!DOCTYPE html>
+#     <html>
+#     <head>
+#         <title>Uber Trip Forecast Dashboard</title>
+#         <meta charset="utf-8">
+#     </head>
+#     <body>
+#         <h1 style="text-align:center;">📊 Uber Trip Analysis - Interactive Plots</h1>
+#         {html_blocks}
+#     </body>
+#     </html>
+#     """
+#     return HTMLResponse(content=full_page)
+
 @app.get("/", response_class=HTMLResponse)
 def dashboard():
     plots = [
@@ -37,12 +70,20 @@ def dashboard():
         "rf_vs_actual",
         "ensemble_vs_actual"
     ]
+
     html_blocks = ""
     for plot in plots:
         path = os.path.join("plots", f"{plot}.html")
         if os.path.exists(path):
             with open(path, "r") as f:
-                html_blocks += f.read()
+                content = f.read()
+                body_start = content.find("<body>")
+                body_end = content.find("</body>")
+                if body_start != -1 and body_end != -1:
+                    body = content[body_start + 6:body_end]
+                    html_blocks += f"<h2>{plot.replace('_', ' ').title()}</h2>\n" + body
+                else:
+                    html_blocks += f"<h3>⚠️ {plot}.html has no <body></body> block</h3>"
         else:
             html_blocks += f"<h3>❌ {plot}.html not found</h3>"
 
@@ -50,16 +91,22 @@ def dashboard():
     <!DOCTYPE html>
     <html>
     <head>
-        <title>Uber Trip Forecast Dashboard</title>
+        <title>Uber Dashboard</title>
         <meta charset="utf-8">
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+        <style>
+            body {{ font-family: Arial, sans-serif; margin: 40px; }}
+            h2 {{ color: #2c3e50; margin-top: 40px; }}
+        </style>
     </head>
     <body>
-        <h1 style="text-align:center;">📊 Uber Trip Analysis - Interactive Plots</h1>
+        <h1 style="text-align:center;">📊 Uber Trip Analysis Dashboard</h1>
         {html_blocks}
     </body>
     </html>
     """
     return HTMLResponse(content=full_page)
+
 
 @app.post("/predict")
 def predict_trips(features: TripFeatures):
