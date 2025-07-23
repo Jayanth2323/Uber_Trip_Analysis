@@ -1,4 +1,4 @@
-# app/main.py
+# app/main.py (final dashboard with all plots including SHAP, decomposition, train/test)
 
 import os
 import numpy as np
@@ -9,8 +9,8 @@ from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 
 app = FastAPI(
     title="Uber Trip Forecasting API",
-    description="Forecast daily Uber trip counts using FOIL dataset features + interactive plots",
-    version="2.0.0",
+    description="Forecast daily Uber trip counts using FOIL dataset features + interactive dashboard",
+    version="2.0.1",
 )
 
 class TripFeatures(BaseModel):
@@ -27,7 +27,6 @@ except Exception as e:
     model = None
     print("⚠️ Model load error:", e)
 
-# ✅ Root route: show dashboard with all embedded plots
 @app.get("/", response_class=HTMLResponse)
 def dashboard():
     plots = [
@@ -35,7 +34,10 @@ def dashboard():
         "trips_per_day",
         "xgb_vs_actual",
         "rf_vs_actual",
-        "ensemble_vs_actual"
+        "ensemble_vs_actual",
+        "train_test_split",
+        "decomposition",
+        "shap_summary"  # SHAP plot
     ]
 
     html_blocks = ""
@@ -73,7 +75,6 @@ def dashboard():
     </html>
     """
     return HTMLResponse(content=full_page)
-
 
 @app.post("/predict")
 def predict_trips(features: TripFeatures):
