@@ -72,3 +72,20 @@ plt.savefig("plots/xgb_vs_actual.png")
 plt.close()
 
 print("✅ Saved: plots/xgb_vs_actual.png")
+
+# === Random Forest Predictions vs Actual ===
+rf_df = pd.read_csv("data/xgb_predictions.csv")  # same file, now includes RF too
+rf_df['date'] = pd.to_datetime(rf_df['date'])
+
+plt.figure(figsize=(12, 6))
+plt.plot(rf_df['date'], rf_df['actual'], label='Actual Trips', color='black')
+plt.plot(rf_df['date'], rf_df['predicted_rf'], label='Random Forest Prediction', color='blue')
+plt.title("Random Forest Prediction vs Actual")
+plt.xlabel("Date")
+plt.ylabel("Trips")
+plt.legend()
+plt.tight_layout()
+plt.savefig("plots/rf_vs_actual.png")
+plt.close()
+
+print("✅ Saved: plots/rf_vs_actual.png")

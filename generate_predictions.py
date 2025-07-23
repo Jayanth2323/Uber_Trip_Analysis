@@ -29,3 +29,14 @@ out_df = pd.DataFrame({
 os.makedirs("data", exist_ok=True)
 out_df.to_csv("data/xgb_predictions.csv", index=False)
 print("✅ Saved: data/xgb_predictions.csv")
+
+# === Load Random Forest model
+rf_model = joblib.load("models/rf_model.pkl")  # adjust path if needed
+
+# === Predict with RF
+X_rf = df[features].copy()
+X_rf.columns = ['Hour', 'Day', 'DayOfWeek', 'Month', 'active_vehicles']
+y_rf_pred = rf_model.predict(X_rf)
+
+# === Add to same output dataframe
+out_df["predicted_rf"] = y_rf_pred
