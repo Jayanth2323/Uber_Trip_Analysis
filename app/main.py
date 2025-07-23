@@ -89,6 +89,7 @@ PLOT_FILES = {
     "train_test_split": "train_test_split.png",
     "xgb_vs_actual": "xgb_vs_actual.png",
     "rf_vs_actual": "rf_vs_actual.png",
+    "ensemble_vs_actual": "ensemble_vs_actual.png",
     # add other plot filenames here as generated
 }
 
