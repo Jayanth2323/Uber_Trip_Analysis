@@ -2,6 +2,7 @@
 import pandas as pd
 import plotly.graph_objects as go
 import os
+import plotly.io as pio
 
 os.makedirs("plots", exist_ok=True)
 
@@ -73,3 +74,38 @@ fig = go.Figure(data=go.Bar(x=dow['day_name'], y=dow['actual'], name="Trips"))
 fig.update_layout(title="Trips per Day of Week", xaxis_title="Day of Week", yaxis_title="Total Trips")
 fig.write_html("plots/trips_per_day.html")
 print("✅ Saved: plots/trips_per_day.html")
+
+# === Convert train_test_split.png → train_test_split.html (interactive version)
+df = pd.read_csv("data/uber_processed.csv")
+df['date'] = pd.to_datetime(df['date'])
+df.set_index('date', inplace=True)
+ts = df['trips'].resample('h').sum()
+split_date = '2015-06-01'
+
+fig_split = go.Figure()
+fig_split.add_trace(go.Scatter(x=ts.index, y=ts.values, name="Trips", line=dict(color="skyblue")))
+fig_split.add_vline(x=split_date, line=dict(dash="dash", color="red"), annotation_text="Train/Test Split")
+fig_split.update_layout(title="Train/Test Split on Uber Trip Data", xaxis_title="Date", yaxis_title="Trips per Hour")
+pio.write_html(fig_split, file="plots/train_test_split.html", auto_open=False)
+print("✅ Saved: plots/train_test_split.html")
+
+
+# === Convert decomposition to interactive version
+from statsmodels.tsa.seasonal import seasonal_decompose
+
+ts = df['trips'].resample('h').sum()
+result = seasonal_decompose(ts, model='additive', period=24)
+decomp_df = pd.DataFrame({
+    "observed": result.observed,
+    "trend": result.trend,
+    "seasonal": result.seasonal,
+    "resid": result.resid
+})
+decomp_df = decomp_df.reset_index().dropna()
+
+fig_decomp = go.Figure()
+for col in ["observed", "trend", "seasonal", "resid"]:
+    fig_decomp.add_trace(go.Scatter(x=decomp_df['date'], y=decomp_df[col], name=col.title()))
+fig_decomp.update_layout(title="Seasonal Decomposition of Uber Trips", xaxis_title="Date")
+pio.write_html(fig_decomp, file="plots/decomposition.html", auto_open=False)
+print("✅ Saved: plots/decomposition.html")
