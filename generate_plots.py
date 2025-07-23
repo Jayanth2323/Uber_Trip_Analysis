@@ -26,3 +26,30 @@ plt.savefig("plots/decomposition.png")
 plt.close()
 
 print("✅ Saved: plots/decomposition.png")
+
+# === Train/Test Split Visualization ===
+
+# Reload data to avoid 'date' already set as index
+df = pd.read_csv("data/uber_processed.csv")
+df['date'] = pd.to_datetime(df['date'])
+df.set_index('date', inplace=True)
+
+# Aggregate hourly trip counts
+ts = df['trips'].resample('h').sum()
+
+# Define split date
+split_date = '2015-06-01'  # 📌 adjust as per your PDF if needed
+
+# Plot full time series with split line
+plt.figure(figsize=(12, 6))
+plt.plot(ts, label="Trips", color="skyblue")
+plt.axvline(pd.Timestamp(split_date), color='red', linestyle='--', linewidth=2, label='Train/Test Split')
+plt.title("Train/Test Split on Uber Trip Data")
+plt.xlabel("Date")
+plt.ylabel("Trips per Hour")
+plt.legend()
+plt.tight_layout()
+plt.savefig("plots/train_test_split.png")
+plt.close()
+
+print("✅ Saved: plots/train_test_split.png")
