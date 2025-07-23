@@ -28,39 +28,6 @@ except Exception as e:
     print("⚠️ Model load error:", e)
 
 # ✅ Root route: show dashboard with all embedded plots
-# @app.get("/", response_class=HTMLResponse)
-# def dashboard():
-#     plots = [
-#         "trips_per_hour",
-#         "trips_per_day",
-#         "xgb_vs_actual",
-#         "rf_vs_actual",
-#         "ensemble_vs_actual"
-#     ]
-#     html_blocks = ""
-#     for plot in plots:
-#         path = os.path.join("plots", f"{plot}.html")
-#         if os.path.exists(path):
-#             with open(path, "r") as f:
-#                 html_blocks += f.read()
-#         else:
-#             html_blocks += f"<h3>❌ {plot}.html not found</h3>"
-
-#     full_page = f"""
-#     <!DOCTYPE html>
-#     <html>
-#     <head>
-#         <title>Uber Trip Forecast Dashboard</title>
-#         <meta charset="utf-8">
-#     </head>
-#     <body>
-#         <h1 style="text-align:center;">📊 Uber Trip Analysis - Interactive Plots</h1>
-#         {html_blocks}
-#     </body>
-#     </html>
-#     """
-#     return HTMLResponse(content=full_page)
-
 @app.get("/", response_class=HTMLResponse)
 def dashboard():
     plots = [
