@@ -27,9 +27,39 @@ except Exception as e:
     model = None
     print("⚠️ Model load error:", e)
 
-@app.get("/")
-def root():
-    return {"message": "🚀 Uber FOIL Trip Forecasting API with interactive plots is running!"}
+# ✅ Root route: show dashboard with all embedded plots
+@app.get("/", response_class=HTMLResponse)
+def dashboard():
+    plots = [
+        "trips_per_hour",
+        "trips_per_day",
+        "xgb_vs_actual",
+        "rf_vs_actual",
+        "ensemble_vs_actual"
+    ]
+    html_blocks = ""
+    for plot in plots:
+        path = os.path.join("plots", f"{plot}.html")
+        if os.path.exists(path):
+            with open(path, "r") as f:
+                html_blocks += f.read()
+        else:
+            html_blocks += f"<h3>❌ {plot}.html not found</h3>"
+
+    full_page = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Uber Trip Forecast Dashboard</title>
+        <meta charset="utf-8">
+    </head>
+    <body>
+        <h1 style="text-align:center;">📊 Uber Trip Analysis - Interactive Plots</h1>
+        {html_blocks}
+    </body>
+    </html>
+    """
+    return HTMLResponse(content=full_page)
 
 @app.post("/predict")
 def predict_trips(features: TripFeatures):
@@ -65,7 +95,6 @@ def get_metrics():
         }
     }
 
-# === Explainability Plot ===
 @app.get("/explain")
 def get_shap_plot():
     path = os.path.join("plots", "shap_summary.png")
@@ -73,15 +102,13 @@ def get_shap_plot():
         return FileResponse(path, media_type="image/png")
     return {"error": "SHAP plot not found. Please generate it."}
 
-# === Serve interactive HTML plots ===
 @app.get("/plots/{plot_name}", response_class=HTMLResponse)
 def serve_plot(plot_name: str):
     html_path = os.path.join("plots", f"{plot_name}.html")
     if os.path.exists(html_path):
         with open(html_path, "r") as f:
             return HTMLResponse(content=f.read())
-    
-    # fallback to static png
+
     png_path = os.path.join("plots", f"{plot_name}.png")
     if os.path.exists(png_path):
         return FileResponse(png_path, media_type="image/png")
