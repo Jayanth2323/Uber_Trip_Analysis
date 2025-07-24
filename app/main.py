@@ -1,4 +1,4 @@
-# app/main.py (final dashboard with all plots including SHAP, decomposition, train/test)
+# app/main.py (final dashboard with premium UI and interactive tabs)
 
 import os
 import numpy as np
@@ -9,8 +9,8 @@ from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 
 app = FastAPI(
     title="Uber Trip Forecasting API",
-    description="Forecast daily Uber trip counts using FOIL dataset features + interactive dashboard",
-    version="2.0.1",
+    description="Forecast daily Uber trip counts using FOIL dataset features + premium dashboard",
+    version="3.0.0",
 )
 
 class TripFeatures(BaseModel):
@@ -30,74 +30,65 @@ except Exception as e:
 @app.get("/", response_class=HTMLResponse)
 def dashboard():
     plots = [
-        "trips_per_hour", "trips_per_day",
-        "xgb_vs_actual", "rf_vs_actual", "ensemble_vs_actual",
-        "train_test_split", "decomposition", "shap_summary"
+        ("Forecast Models", ["xgb_vs_actual", "rf_vs_actual", "ensemble_vs_actual"]),
+        ("Exploration", ["trips_per_hour", "trips_per_day"]),
+        ("Time Series", ["train_test_split", "decomposition"]),
+        ("Explainability", ["shap_summary"])
     ]
 
-    html_blocks = ""
-    for plot in plots:
-        path = os.path.join("plots", f"{plot}.html")
-        if os.path.exists(path):
-            with open(path, "r") as f:
-                body = f.read()
-                inner = body.split("<body>")[1].split("</body>")[0] if "<body>" in body else body
-                html_blocks += f"""
-                <section class="plot-section">
-                    <h2>{plot.replace('_', ' ').title()}</h2>
-                    {inner}
-                </section>
-                """
-        else:
-            html_blocks += f"<h3>❌ {plot}.html not found</h3>"
+    # Load plot blocks
+    tab_contents = ""
+    nav_tabs = ""
+    for idx, (tab_name, plot_keys) in enumerate(plots):
+        tab_id = f"tab{idx}"
+        checked = "checked" if idx == 0 else ""
+        nav_tabs += f"<input type='radio' id='{tab_id}' name='tabs' {checked}><label for='{tab_id}'>{tab_name}</label>"
 
-    # === UI Template ===
+        tab_html = ""
+        for plot in plot_keys:
+            path = os.path.join("plots", f"{plot}.html")
+            if os.path.exists(path):
+                with open(path, "r") as f:
+                    body = f.read()
+                    inner = body.split("<body>")[1].split("</body>")[0] if "<body>" in body else body
+                    tab_html += f"<div class='plot-card'><h2>{plot.replace('_', ' ').title()}</h2>{inner}</div>"
+            else:
+                tab_html += f"<div class='plot-card'><h2>{plot.replace('_', ' ').title()}</h2><p>❌ Plot not found</p></div>"
+        tab_contents += f"<div class='tab'>{tab_html}</div>"
+
+    # HTML template
     html = f"""
     <!DOCTYPE html>
-    <html lang="en">
+    <html lang='en'>
     <head>
-        <meta charset="UTF-8" />
-        <title>Uber Trip Forecasting Dashboard</title>
-        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+        <meta charset='UTF-8'>
+        <title>Uber Trip Analysis Dashboard</title>
+        <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
         <style>
-            body {{
-                font-family: 'Segoe UI', sans-serif;
-                margin: 0;
-                padding: 0;
-                background-color: #f4f4f4;
-                color: #2c3e50;
-            }}
-            header {{
-                background: #2d3436;
-                color: #fff;
-                padding: 20px;
-                text-align: center;
-                font-size: 2em;
-                letter-spacing: 1px;
-            }}
-            .plot-section {{
-                margin: 40px auto;
-                padding: 20px;
-                max-width: 1100px;
-                background: white;
-                border-radius: 8px;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            }}
-            h2 {{
-                margin-top: 0;
-                text-align: center;
-                color: #0984e3;
-            }}
+            body {{ font-family: 'Segoe UI', sans-serif; margin: 0; background: #ecf0f1; }}
+            header {{ background: #2c3e50; color: white; padding: 20px; text-align: center; font-size: 1.8em; }}
+            .tabs {{ display: flex; flex-direction: column; max-width: 1200px; margin: 0 auto; }}
+            input[name='tabs'] {{ display: none; }}
+            label {{ padding: 15px; background: #dfe6e9; cursor: pointer; font-weight: bold; border-bottom: 1px solid #b2bec3; }}
+            input:checked + label {{ background: #0984e3; color: white; }}
+            .tab {{ display: none; padding: 20px; background: white; border-radius: 0 0 8px 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }}
+            input:checked + label + .tab {{ display: block; }}
+            .plot-card {{ margin-bottom: 40px; }}
+            h2 {{ color: #0984e3; margin-bottom: 10px; }}
+            footer {{ text-align: center; padding: 20px; background: #2c3e50; color: white; margin-top: 40px; }}
         </style>
     </head>
     <body>
         <header>📊 Uber Trip Forecasting Dashboard</header>
-        {html_blocks}
+        <div class='tabs'>
+            {nav_tabs}
+            {tab_contents}
+        </div>
+        <footer>Built by Jayanth Chennoju | Tools: FastAPI, XGBoost, Plotly, SHAP, Render</footer>
     </body>
     </html>
     """
     return HTMLResponse(content=html)
-
 
 @app.post("/predict")
 def predict_trips(features: TripFeatures):
@@ -140,15 +131,15 @@ def get_shap_plot():
         return FileResponse(path, media_type="image/png")
     return {"error": "SHAP plot not found. Please generate it."}
 
-@app.get("/plots/{plot_name}", response_class=HTMLResponse)
+@app.get("/plots/{{plot_name}}", response_class=HTMLResponse)
 def serve_plot(plot_name: str):
-    html_path = os.path.join("plots", f"{plot_name}.html")
+    html_path = os.path.join("plots", f"{{plot_name}}.html")
     if os.path.exists(html_path):
         with open(html_path, "r") as f:
             return HTMLResponse(content=f.read())
 
-    png_path = os.path.join("plots", f"{plot_name}.png")
+    png_path = os.path.join("plots", f"{{plot_name}}.png")
     if os.path.exists(png_path):
         return FileResponse(png_path, media_type="image/png")
 
-    return JSONResponse(status_code=404, content={"error": f"Plot {plot_name} not found."})
+    return JSONResponse(status_code=404, content={"error": f"Plot {{plot_name}} not found."})
