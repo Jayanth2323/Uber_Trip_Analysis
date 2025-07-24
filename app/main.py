@@ -176,6 +176,29 @@ def dashboard():
                 color: var(--card);
                 margin-top: 40px;
             }}
+            .dark {
+                background: #1e272e;
+                color: #dcdde1;
+            }
+            .dark .tab-content {
+                background: #2f3640;
+                color: #f5f6fa;
+            }
+            .dark header,
+            .dark footer {
+                background: #1e272e;
+            }
+            .dark nav {
+                background: #2d3436;
+            }
+            .dark nav li {
+                background: #636e72;
+            }
+            .dark nav li.active,
+            .dark nav li:hover {
+                background: #00cec9;
+                color: #1e272e;
+            }
         </style>
     </head>
     <body>
@@ -183,7 +206,7 @@ def dashboard():
             📊 Uber Trip Forecasting Dashboard
             <div class="theme-toggle">
                 <label for="toggle-theme">🌓</label>
-                <input type="checkbox" id="toggle-theme" />
+                # <input type="checkbox" id="toggle-theme" />
             </div>
         </header>
         <nav>
@@ -222,6 +245,48 @@ def dashboard():
                 }});
             }});
         </script>
+        <script>
+        // === Tab Switching ===
+        document.querySelectorAll('nav li').forEach((tab, index) => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('nav li').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(`tab${index}`).classList.add('active');
+            });
+        });
+
+        // === Theme Toggle ===
+        const themeToggle = document.createElement('button');
+        themeToggle.textContent = '🌓 Toggle Theme';
+        themeToggle.className = 'btn';
+        themeToggle.style.position = 'fixed';
+        themeToggle.style.top = '20px';
+        themeToggle.style.right = '20px';
+        document.body.appendChild(themeToggle);
+
+        const setTheme = (dark) => {
+            document.body.classList.toggle('dark', dark);
+            localStorage.setItem('theme', dark ? 'dark' : 'light');
+
+            // update plot themes
+            const plotlyFrames = document.querySelectorAll("iframe");
+            plotlyFrames.forEach(iframe => {
+                iframe.contentWindow?.Plotly?.relayout?.(
+                    iframe.contentWindow.document.querySelector("div.js-plotly-plot"),
+                    { template: dark ? "plotly_dark" : "plotly_white" }
+                );
+            });
+        };
+
+        const savedTheme = localStorage.getItem('theme') === 'dark';
+        setTheme(savedTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const darkMode = !document.body.classList.contains('dark');
+            setTheme(darkMode);
+        });
+    </script>
     </body>
     </html>
     """
