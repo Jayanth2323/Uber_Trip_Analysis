@@ -36,27 +36,25 @@ def dashboard():
         ("Explainability", ["shap_summary"])
     ]
 
-    # Load plot blocks
-    tab_contents = ""
     nav_tabs = ""
+    tab_contents = ""
     for idx, (tab_name, plot_keys) in enumerate(plots):
         tab_id = f"tab{idx}"
-        checked = "checked" if idx == 0 else ""
-        nav_tabs += f"<input type='radio' id='{tab_id}' name='tabs' {checked}><label for='{tab_id}'>{tab_name}</label>"
+        nav_tabs += f"<input type='radio' id='{tab_id}' name='tabs' {'checked' if idx == 0 else ''}><label for='{tab_id}'>{tab_name}</label>"
 
-        tab_html = ""
+        html_inner = ""
         for plot in plot_keys:
             path = os.path.join("plots", f"{plot}.html")
             if os.path.exists(path):
                 with open(path, "r") as f:
-                    body = f.read()
-                    inner = body.split("<body>")[1].split("</body>")[0] if "<body>" in body else body
-                    tab_html += f"<div class='plot-card'><h2>{plot.replace('_', ' ').title()}</h2>{inner}</div>"
+                    content = f.read()
+                    body = content.split("<body>")[1].split("</body>")[0] if "<body>" in content else content
+                    html_inner += f"<div class='plot-card'><h2>{plot.replace('_', ' ').title()}</h2>{body}</div>"
             else:
-                tab_html += f"<div class='plot-card'><h2>{plot.replace('_', ' ').title()}</h2><p>❌ Plot not found</p></div>"
-        tab_contents += f"<div class='tab'>{tab_html}</div>"
+                html_inner += f"<div class='plot-card'><h2>{plot.replace('_', ' ').title()}</h2><p>❌ Plot not found</p></div>"
 
-    # HTML template
+        tab_contents += f"<div class='tab-content' id='content{idx}'>{html_inner}</div>"
+
     html = f"""
     <!DOCTYPE html>
     <html lang='en'>
@@ -67,12 +65,38 @@ def dashboard():
         <style>
             body {{ font-family: 'Segoe UI', sans-serif; margin: 0; background: #ecf0f1; }}
             header {{ background: #2c3e50; color: white; padding: 20px; text-align: center; font-size: 1.8em; }}
-            .tabs {{ display: flex; flex-direction: column; max-width: 1200px; margin: 0 auto; }}
-            input[name='tabs'] {{ display: none; }}
-            label {{ padding: 15px; background: #dfe6e9; cursor: pointer; font-weight: bold; border-bottom: 1px solid #b2bec3; }}
-            input:checked + label {{ background: #0984e3; color: white; }}
-            .tab {{ display: none; padding: 20px; background: white; border-radius: 0 0 8px 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }}
-            input:checked + label + .tab {{ display: block; }}
+            .tabs {{ max-width: 1200px; margin: 0 auto; }}
+            .tabs input[type="radio"] {{ display: none; }}
+            .tabs label {{
+                padding: 15px;
+                background: #dfe6e9;
+                cursor: pointer;
+                font-weight: bold;
+                border-bottom: 1px solid #b2bec3;
+                display: inline-block;
+                margin-right: 5px;
+            }}
+            .tabs label:hover {{ background: #b2bec3; }}
+            .tabs .tab-content {{
+                display: none;
+                padding: 20px;
+                background: white;
+                border-radius: 0 0 8px 8px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            }}
+            #tab0:checked ~ #content0,
+            #tab1:checked ~ #content1,
+            #tab2:checked ~ #content2,
+            #tab3:checked ~ #content3 {{
+                display: block;
+            }}
+            #tab0:checked + label,
+            #tab1:checked + label,
+            #tab2:checked + label,
+            #tab3:checked + label {{
+                background: #0984e3;
+                color: white;
+            }}
             .plot-card {{ margin-bottom: 40px; }}
             h2 {{ color: #0984e3; margin-bottom: 10px; }}
             footer {{ text-align: center; padding: 20px; background: #2c3e50; color: white; margin-top: 40px; }}
@@ -131,15 +155,15 @@ def get_shap_plot():
         return FileResponse(path, media_type="image/png")
     return {"error": "SHAP plot not found. Please generate it."}
 
-@app.get("/plots/{{plot_name}}", response_class=HTMLResponse)
+@app.get("/plots/{plot_name}", response_class=HTMLResponse)
 def serve_plot(plot_name: str):
-    html_path = os.path.join("plots", f"{{plot_name}}.html")
+    html_path = os.path.join("plots", f"{plot_name}.html")
     if os.path.exists(html_path):
         with open(html_path, "r") as f:
             return HTMLResponse(content=f.read())
 
-    png_path = os.path.join("plots", f"{{plot_name}}.png")
+    png_path = os.path.join("plots", f"{plot_name}.png")
     if os.path.exists(png_path):
         return FileResponse(png_path, media_type="image/png")
 
-    return JSONResponse(status_code=404, content={"error": f"Plot {{plot_name}} not found."})
+    return JSONResponse(status_code=404, content={"error": f"Plot {plot_name} not found."})
