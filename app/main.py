@@ -230,7 +230,7 @@ def dashboard():
                     toggle.checked = true;
                 }}
                 toggle.addEventListener('change', () => {{
-                    document.body.classList.toggle('dark');
+                    document.body.classList.toggle('dark', dark);
                     localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
                 }});
             }}
@@ -253,27 +253,27 @@ def dashboard():
         themeToggle.style.right = '20px';
         document.body.appendChild(themeToggle);
 
-        const setTheme = (dark) => {
+        const setTheme = (dark) => {{
             document.body.classList.toggle('dark', dark);
             localStorage.setItem('theme', dark ? 'dark' : 'light');
 
             // update plot themes
             const plotlyFrames = document.querySelectorAll("iframe");
-            plotlyFrames.forEach(iframe => {
+            plotlyFrames.forEach(iframe => {{
                 iframe.contentWindow?.Plotly?.relayout?.(
                     iframe.contentWindow.document.querySelector("div.js-plotly-plot"),
                     { template: dark ? "plotly_dark" : "plotly_white" }
                 );
-            });
-        };
+            }});
+        }};
 
         const savedTheme = localStorage.getItem('theme') === 'dark';
         setTheme(savedTheme);
 
-        themeToggle.addEventListener('click', () => {
+        themeToggle.addEventListener('click', () => {{
             const darkMode = !document.body.classList.contains('dark');
             setTheme(darkMode);
-        });
+        }});
     </script>
     </body>
     </html>
