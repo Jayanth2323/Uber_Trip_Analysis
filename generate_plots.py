@@ -125,3 +125,17 @@ for col in ["observed", "trend", "seasonal", "resid"]:
 fig_decomp.update_layout(title="Seasonal Decomposition of Uber Trips", xaxis_title="Date")
 pio.write_html(fig_decomp, file="plots/decomposition.html", auto_open=False)
 print("✅ Saved: plots/decomposition.html")
+
+# === Trips per Hour (EDA) ===
+fig = go.Figure(data=go.Bar(x=hourly['hour'], y=hourly['actual'], name="Trips"))
+fig.update_layout(title="Trips per Hour", xaxis_title="Hour", yaxis_title="Total Trips")
+fig.write_html("plots/trips_per_hour.html")
+fig.write_image("plots/trips_per_hour.png")  # ✅ Save PNG
+print("✅ Saved: plots/trips_per_hour.html & .png")
+
+# === Trips per Day of Week (EDA) ===
+fig = go.Figure(data=go.Bar(x=dow['day_name'], y=dow['actual'], name="Trips"))
+fig.update_layout(title="Trips per Day of Week", xaxis_title="Day of Week", yaxis_title="Total Trips")
+fig.write_html("plots/trips_per_day.html")
+fig.write_image("plots/trips_per_day.png")  # ✅ Save PNG
+print("✅ Saved: plots/trips_per_day.html & .png")
