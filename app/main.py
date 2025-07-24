@@ -30,14 +30,9 @@ except Exception as e:
 @app.get("/", response_class=HTMLResponse)
 def dashboard():
     plots = [
-        "trips_per_hour",
-        "trips_per_day",
-        "xgb_vs_actual",
-        "rf_vs_actual",
-        "ensemble_vs_actual",
-        "train_test_split",
-        "decomposition",
-        "shap_summary"  # SHAP plot
+        "trips_per_hour", "trips_per_day",
+        "xgb_vs_actual", "rf_vs_actual", "ensemble_vs_actual",
+        "train_test_split", "decomposition", "shap_summary"
     ]
 
     html_blocks = ""
@@ -45,36 +40,64 @@ def dashboard():
         path = os.path.join("plots", f"{plot}.html")
         if os.path.exists(path):
             with open(path, "r") as f:
-                content = f.read()
-                body_start = content.find("<body>")
-                body_end = content.find("</body>")
-                if body_start != -1 and body_end != -1:
-                    body = content[body_start + 6:body_end]
-                    html_blocks += f"<h2>{plot.replace('_', ' ').title()}</h2>\n" + body
-                else:
-                    html_blocks += f"<h3>⚠️ {plot}.html has no <body></body> block</h3>"
+                body = f.read()
+                inner = body.split("<body>")[1].split("</body>")[0] if "<body>" in body else body
+                html_blocks += f"""
+                <section class="plot-section">
+                    <h2>{plot.replace('_', ' ').title()}</h2>
+                    {inner}
+                </section>
+                """
         else:
             html_blocks += f"<h3>❌ {plot}.html not found</h3>"
 
-    full_page = f"""
+    # === UI Template ===
+    html = f"""
     <!DOCTYPE html>
-    <html>
+    <html lang="en">
     <head>
-        <title>Uber Dashboard</title>
-        <meta charset="utf-8">
+        <meta charset="UTF-8" />
+        <title>Uber Trip Forecasting Dashboard</title>
         <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
         <style>
-            body {{ font-family: Arial, sans-serif; margin: 40px; }}
-            h2 {{ color: #2c3e50; margin-top: 40px; }}
+            body {{
+                font-family: 'Segoe UI', sans-serif;
+                margin: 0;
+                padding: 0;
+                background-color: #f4f4f4;
+                color: #2c3e50;
+            }}
+            header {{
+                background: #2d3436;
+                color: #fff;
+                padding: 20px;
+                text-align: center;
+                font-size: 2em;
+                letter-spacing: 1px;
+            }}
+            .plot-section {{
+                margin: 40px auto;
+                padding: 20px;
+                max-width: 1100px;
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            }}
+            h2 {{
+                margin-top: 0;
+                text-align: center;
+                color: #0984e3;
+            }}
         </style>
     </head>
     <body>
-        <h1 style="text-align:center;">📊 Uber Trip Analysis Dashboard</h1>
+        <header>📊 Uber Trip Forecasting Dashboard</header>
         {html_blocks}
     </body>
     </html>
     """
-    return HTMLResponse(content=full_page)
+    return HTMLResponse(content=html)
+
 
 @app.post("/predict")
 def predict_trips(features: TripFeatures):
