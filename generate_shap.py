@@ -11,7 +11,7 @@ import plotly.io as pio
 MODEL_PATH = "models/xgb_model.pkl"
 DATA_PATH = "data/uber_processed.csv"
 OUTPUT_HTML = "plots/shap_summary.html"
-FEATURES = ['hour', 'day', 'day_of_week', 'month', 'active_vehicles']
+FEATURES = ["hour", "day", "day_of_week", "month", "active_vehicles"]
 
 # === Ensure output directory exists
 os.makedirs("plots", exist_ok=True)
@@ -33,11 +33,11 @@ mean_abs = shap_df.abs().mean().sort_values(ascending=True)
 fig = px.bar(
     x=mean_abs.values,
     y=mean_abs.index,
-    orientation='h',
+    orientation="h",
     title="SHAP Feature Importance",
-    labels={'x': "Mean |SHAP value|", 'y': "Feature"},
+    labels={"x": "Mean |SHAP value|", "y": "Feature"},
     color=mean_abs.values,
-    color_continuous_scale="Viridis"
+    color_continuous_scale="Viridis",
 )
 fig.update_layout(template="plotly_white", height=400)
 

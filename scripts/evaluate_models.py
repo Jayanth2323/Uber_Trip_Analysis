@@ -3,8 +3,10 @@
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_percentage_error, r2_score
 
+
 def evaluate_and_plot(y_true, predictions: dict, output_dir="plots"):
     import os
+
     os.makedirs(output_dir, exist_ok=True)
 
     for model_name, y_pred in predictions.items():

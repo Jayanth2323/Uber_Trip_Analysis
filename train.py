@@ -9,17 +9,14 @@ from sklearn.metrics import mean_absolute_percentage_error, r2_score
 df = pd.read_csv("data/uber_processed.csv")
 
 # ✅ Rename columns to match training-time format
-df = df.rename(columns={
-    'hour': 'Hour',
-    'day': 'Day',
-    'day_of_week': 'DayOfWeek',
-    'month': 'Month'
-})
+df = df.rename(
+    columns={"hour": "Hour", "day": "Day", "day_of_week": "DayOfWeek", "month": "Month"}
+)
 
 # === Features and Target ===
-features = ['Hour', 'Day', 'DayOfWeek', 'Month', 'active_vehicles']
+features = ["Hour", "Day", "DayOfWeek", "Month", "active_vehicles"]
 X = df[features]
-y = df['trips']
+y = df["trips"]
 
 # === Train/Test Split (optional if needed) ===
 # You can split by date or just use all data for now
@@ -28,12 +25,12 @@ y = df['trips']
 # === Model Configs ===
 models = {
     "xgb": XGBRegressor(
-        objective='reg:squarederror',
+        objective="reg:squarederror",
         n_estimators=300,
         max_depth=6,
         learning_rate=0.1,
         subsample=0.6,
-        colsample_bytree=1.0
+        colsample_bytree=1.0,
     ),
     "rf": RandomForestRegressor(
         n_estimators=100,
@@ -41,17 +38,17 @@ models = {
         min_samples_split=5,
         min_samples_leaf=2,
         max_features=None,
-        random_state=42
+        random_state=42,
     ),
     "gbr": GradientBoostingRegressor(
         n_estimators=300,
         learning_rate=0.1,
         max_depth=5,
-        max_features='sqrt',
+        max_features="sqrt",
         min_samples_split=5,
         min_samples_leaf=1,
-        random_state=42
-    )
+        random_state=42,
+    ),
 }
 
 # === Train & Save Models ===
