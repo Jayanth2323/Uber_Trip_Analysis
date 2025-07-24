@@ -53,7 +53,7 @@ def dashboard():
                    inner = body.split("<body>")[1].split("</body>")[0] if "<body>" in body else body
                    tab_html += f"<div class='plot-card'><h2>{plot.replace('_', ' ').title()}</h2>{inner}</div>"
            else:
-               tab_html += f"<div class='plot-card'><h2>{plot.replace('_', ' ').title()}</h2><p>âŒ Plot not found</p></div>"
+               tab_html += f"<div class='plot-card'><h2>{plot.replace('_', ' ').title()}</h2><p>Plot not found</p></div>"
        tab_contents += f"<div class='tab-content {active_class}' id='{tab_id}'>{tab_html}</div>"
 
    html = f"""
@@ -82,9 +82,6 @@ def dashboard():
    </head>
    <body>
        <header>📊 Uber Trip Forecasting Dashboard</header>
-       <!--
-        # <header>&#128202; Uber Trip Forecasting Dashboard</header>
-       -->
        <nav>
            <ul>
                {tab_headers}
@@ -93,7 +90,7 @@ def dashboard():
        {tab_contents}
        <div class="actions">
            <form action="/export/pdf">
-               <button class="btn" type="submit">ðŸ“„ Export All Plots to PDF</button>
+               <button class="btn" type="submit">📥 Export All Plots to PDF</button>
            </form>
        </div>
        <footer>Built by Jayanth Chennoju | Tools: FastAPI, XGBoost, Plotly, SHAP, Render</footer>
@@ -131,7 +128,7 @@ def predict_trips(features: TripFeatures):
 def health_check():
    return {
        "model_loaded": model is not None,
-       "status": "âœ… Model is ready!" if model else "âŒ Model failed to load."
+       "status": "Model is ready!" if model else "Model failed to load."
    }
 
 @app.get("/metrics")
