@@ -292,7 +292,7 @@ html = f"""
 </body>
 </html>
 """
-return HTMLResponse(content=html)
+    return HTMLResponse(content=html)
 
 
 @app.post("/predict")
