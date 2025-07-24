@@ -81,7 +81,7 @@ def dashboard():
        </style>
    </head>
    <body>
-       <header>ðŸ“Š Uber Trip Forecasting Dashboard</header>
+       <header>📊 Uber Trip Forecasting Dashboard</header>
        <nav>
            <ul>
                {tab_headers}
