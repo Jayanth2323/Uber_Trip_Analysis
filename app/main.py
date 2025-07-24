@@ -130,7 +130,7 @@ def dashboard():
             nav li.active,
             nav li:hover {{
                 background: var(--primary);
-                color: white;
+                color: black;
             }}
             .tab-content {{
                 display: none;
