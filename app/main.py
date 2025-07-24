@@ -206,7 +206,6 @@ def dashboard():
             📊 Uber Trip Forecasting Dashboard
             <div class="theme-toggle">
                 <label for="toggle-theme">🌓</label>
-                # <input type="checkbox" id="toggle-theme" />
             </div>
         </header>
         <nav>
