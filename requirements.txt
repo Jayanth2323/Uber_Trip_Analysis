@@ -25,6 +25,7 @@ executing==2.2.0
 fastapi==0.116.1
 fastjsonschema==2.21.1
 fonttools==4.59.0
+fpdf==1.7.2
 fqdn==1.5.1
 h11==0.16.0
 httpcore==1.0.9
