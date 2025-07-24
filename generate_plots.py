@@ -84,7 +84,11 @@ split_date = pd.Timestamp('2015-06-01')
 
 fig_split = go.Figure()
 fig_split.add_trace(go.Scatter(x=ts.index, y=ts.values, name="Trips", line=dict(color="skyblue")))
-fig_split.add_vline(x=split_date, line_dash="dash", line_color="red")
+fig_split.add_vline(
+    x=split_date,
+    line_dash="dash",
+    line_color="red"
+    )
 
 # Add annotation separately
 fig_split.add_annotation(
@@ -93,6 +97,7 @@ fig_split.add_annotation(
     text="Train/Test Split",
     showarrow=True,
     arrowhead=1,
+    yanchor="bottom",
     ax=0,
     ay=-40
 )

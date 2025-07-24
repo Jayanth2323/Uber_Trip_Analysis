@@ -13,25 +13,23 @@ DATA_PATH = "data/uber_processed.csv"
 OUTPUT_HTML = "plots/shap_summary.html"
 FEATURES = ['hour', 'day', 'day_of_week', 'month', 'active_vehicles']
 
-# === Ensure output dir exists ===
+# === Ensure output directory exists
 os.makedirs("plots", exist_ok=True)
 
-# === Load model and data ===
+# === Load model and data
 model = joblib.load(MODEL_PATH)
 df = pd.read_csv(DATA_PATH)
 X = df[FEATURES].tail(100).astype(float)
 
-# === Generate SHAP values ===
+# === Generate SHAP values
 explainer = shap.Explainer(model)
 shap_values = explainer(X)
 
-# === Convert to DataFrame
+# === Convert SHAP values to DataFrame
 shap_df = pd.DataFrame(shap_values.values, columns=FEATURES)
-
-# === Mean absolute SHAP values for bar plot
 mean_abs = shap_df.abs().mean().sort_values(ascending=True)
 
-# === Plot interactive horizontal bar chart
+# === Create interactive Plotly bar chart
 fig = px.bar(
     x=mean_abs.values,
     y=mean_abs.index,
