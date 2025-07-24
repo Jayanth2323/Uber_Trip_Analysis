@@ -53,61 +53,247 @@ def dashboard():
                    inner = body.split("<body>")[1].split("</body>")[0] if "<body>" in body else body
                    tab_html += f"<div class='plot-card'><h2>{plot.replace('_', ' ').title()}</h2>{inner}</div>"
            else:
-               tab_html += f"<div class='plot-card'><h2>{plot.replace('_', ' ').title()}</h2><p>Plot not found</p></div>"
+               tab_html += f"<div class='plot-card'><h2>{plot.replace('_', ' ').title()}</h2><p>❌ Plot not found</p></div>"
        tab_contents += f"<div class='tab-content {active_class}' id='{tab_id}'>{tab_html}</div>"
 
-   html = f"""
-   <!DOCTYPE html>
-   <html lang='en'>
-   <head>
-       <meta charset='UTF-8'>
-       <title>Uber Trip Forecasting Dashboard</title>
-       <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
-       <style>
-           body {{ font-family: 'Segoe UI', sans-serif; margin: 0; background: #f1f2f6; }}
-           header {{ background: #2c3e50; color: white; padding: 20px; text-align: center; font-size: 2em; }}
-           nav {{ display: flex; justify-content: center; background: #dcdde1; padding: 10px 0; }}
-           nav ul {{ list-style: none; display: flex; padding: 0; margin: 0; }}
-           nav li {{ padding: 10px 20px; cursor: pointer; border-radius: 6px; margin: 0 5px; background: #dfe6e9; }}
-           nav li.active, nav li:hover {{ background: #0984e3; color: white; }}
-           .tab-content {{ display: none; padding: 30px; max-width: 1200px; margin: 0 auto; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-top: 20px; }}
-           .tab-content.active {{ display: block; }}
-           .plot-card {{ margin-bottom: 40px; }}
-           h2 {{ color: #0984e3; margin-bottom: 10px; text-align: center; }}
-           footer {{ text-align: center; padding: 20px; background: #2c3e50; color: white; margin-top: 40px; }}
-           .actions {{ text-align: center; margin-top: 20px; }}
-           .btn {{ background: #00cec9; color: white; padding: 10px 20px; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; }}
-           .btn:hover {{ background: #0984e3; }}
-       </style>
-   </head>
-   <body>
-       <header>📊 Uber Trip Forecasting Dashboard</header>
-       <nav>
-           <ul>
-               {tab_headers}
-           </ul>
-       </nav>
-       {tab_contents}
-       <div class="actions">
-           <form action="/export/pdf">
-               <button class="btn" type="submit">📥 Export All Plots to PDF</button>
-           </form>
-       </div>
-       <footer>Built by Jayanth Chennoju | Tools: FastAPI, XGBoost, Plotly, SHAP, Render</footer>
-       <script>
-           document.querySelectorAll('nav li').forEach((tab, index) => {{
-               tab.addEventListener('click', () => {{
-                   document.querySelectorAll('nav li').forEach(t => t.classList.remove('active'));
-                   document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
-                   tab.classList.add('active');
-                   document.getElementById(`tab${{index}}`).classList.add('active');
-               }});
-           }});
-       </script>
-   </body>
-   </html>
-   """
-   return HTMLResponse(content=html)
+#    html = f"""
+#    <!DOCTYPE html>
+#    <html lang='en'>
+#    <head>
+#        <meta charset='UTF-8'>
+#        <title>Uber Trip Forecasting Dashboard</title>
+#        <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+#        <style>
+#            body {{ font-family: 'Segoe UI', sans-serif; margin: 0; background: #f1f2f6; }}
+#            header {{ background: #2c3e50; color: white; padding: 20px; text-align: center; font-size: 2em; }}
+#            nav {{ display: flex; justify-content: center; background: #dcdde1; padding: 10px 0; }}
+#            nav ul {{ list-style: none; display: flex; padding: 0; margin: 0; }}
+#            nav li {{ padding: 10px 20px; cursor: pointer; border-radius: 6px; margin: 0 5px; background: #dfe6e9; }}
+#            nav li.active, nav li:hover {{ background: #0984e3; color: white; }}
+#            .tab-content {{ display: none; padding: 30px; max-width: 1200px; margin: 0 auto; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-top: 20px; }}
+#            .tab-content.active {{ display: block; }}
+#            .plot-card {{ margin-bottom: 40px; }}
+#            h2 {{ color: #0984e3; margin-bottom: 10px; text-align: center; }}
+#            footer {{ text-align: center; padding: 20px; background: #2c3e50; color: white; margin-top: 40px; }}
+#            .actions {{ text-align: center; margin-top: 20px; }}
+#            .btn {{ background: #00cec9; color: white; padding: 10px 20px; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; }}
+#            .btn:hover {{ background: #0984e3; }}
+#        </style>
+#    </head>
+#    <body>
+#        <header>📊 Uber Trip Forecasting Dashboard</header>
+#        <nav>
+#            <ul>
+#                {tab_headers}
+#            </ul>
+#        </nav>
+#        {tab_contents}
+#        <div class="actions">
+#            <form action="/export/pdf">
+#                <button class="btn" type="submit">📄 Export All Plots to PDF</button>
+#            </form>
+#        </div>
+#        <footer>Built by Jayanth Chennoju | Tools: FastAPI, XGBoost, Plotly, SHAP, Render</footer>
+#        <script>
+#            document.querySelectorAll('nav li').forEach((tab, index) => {{
+#                tab.addEventListener('click', () => {{
+#                    document.querySelectorAll('nav li').forEach(t => t.classList.remove('active'));
+#                    document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+#                    tab.classList.add('active');
+#                    document.getElementById(`tab${{index}}`).classList.add('active');
+#                }});
+#            }});
+#        </script>
+#        <script>
+#        const toggle = document.getElementById('toggle-theme');
+#        const currentTheme = localStorage.getItem('theme');
+#        if (currentTheme === 'dark') {
+#         document.body.classList.add('dark');
+#         toggle.checked = true;
+#         }
+        
+#         toggle.addEventListener('change', () => {
+#             document.body.classList.toggle('dark');
+#             localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+#         });   
+
+#         document.querySelectorAll('nav li').forEach((tab, index) => {
+#             tab.addEventListener('click', () => {
+#                 document.querySelectorAll('nav li').forEach(t => t.classList.remove('active'));
+#                 document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+#                 tab.classList.add('active');
+#                 document.getElementById(`tab${index}`).classList.add('active');
+#             });
+#         });
+#     </script>
+
+#    </body>
+#    </html>
+#    """
+#    return HTMLResponse(content=html)
+
+html = f"""
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <title>Uber Trip Forecasting Dashboard</title>
+    <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+    <style>
+        :root {{
+            --bg: #f1f2f6;
+            --text: #2c3e50;
+            --card: #ffffff;
+            --primary: #0984e3;
+            --nav: #dcdde1;
+        }}
+        body.dark {{
+            --bg: #1e272e;
+            --text: #f5f6fa;
+            --card: #2f3640;
+            --primary: #00a8ff;
+            --nav: #353b48;
+        }}
+        body {{
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            transition: background 0.3s, color 0.3s;
+        }}
+        header {{
+            background: var(--text);
+            color: var(--card);
+            padding: 20px;
+            text-align: center;
+            font-size: 2em;
+            position: relative;
+        }}
+        .theme-toggle {{
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }}
+        nav {{
+            display: flex;
+            justify-content: center;
+            background: var(--nav);
+            padding: 10px 0;
+        }}
+        nav ul {{
+            list-style: none;
+            display: flex;
+            padding: 0;
+            margin: 0;
+        }}
+        nav li {{
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 6px;
+            margin: 0 5px;
+            background: #dfe6e9;
+            transition: 0.2s;
+        }}
+        nav li.active,
+        nav li:hover {{
+            background: var(--primary);
+            color: white;
+        }}
+        .tab-content {{
+            display: none;
+            padding: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--card);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }}
+        .tab-content.active {{
+            display: block;
+        }}
+        .plot-card {{
+            margin-bottom: 40px;
+        }}
+        h2 {{
+            color: var(--primary);
+            margin-bottom: 10px;
+            text-align: center;
+        }}
+        .actions {{
+            text-align: center;
+            margin-top: 20px;
+        }}
+        .btn {{
+            background: #00cec9;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }}
+        .btn:hover {{
+            background: var(--primary);
+        }}
+        footer {{
+            text-align: center;
+            padding: 20px;
+            background: var(--text);
+            color: var(--card);
+            margin-top: 40px;
+        }}
+    </style>
+</head>
+<body>
+    <header>
+        📊 Uber Trip Forecasting Dashboard
+        <div class="theme-toggle">
+            <label for="toggle-theme">🌓</label>
+            <input type="checkbox" id="toggle-theme" />
+        </div>
+    </header>
+    <nav>
+        <ul>
+            {tab_headers}
+        </ul>
+    </nav>
+    {tab_contents}
+    <div class="actions">
+        <form action="/export/pdf">
+            <button class="btn" type="submit">📄 Export All Plots to PDF</button>
+        </form>
+    </div>
+    <footer>Built by Jayanth Chennoju | Tools: FastAPI, XGBoost, Plotly, SHAP, Render</footer>
+
+    <script>
+        const toggle = document.getElementById('toggle-theme');
+        if (toggle) {{
+            const currentTheme = localStorage.getItem('theme');
+            if (currentTheme === 'dark') {{
+                document.body.classList.add('dark');
+                toggle.checked = true;
+            }}
+            toggle.addEventListener('change', () => {{
+                document.body.classList.toggle('dark');
+                localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+            }});
+        }}
+
+        document.querySelectorAll('nav li').forEach((tab, index) => {{
+            tab.addEventListener('click', () => {{
+                document.querySelectorAll('nav li').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(`tab${{index}}`).classList.add('active');
+            }});
+        }});
+    </script>
+</body>
+</html>
+"""
+return HTMLResponse(content=html)
+
 
 @app.post("/predict")
 def predict_trips(features: TripFeatures):
@@ -126,10 +312,10 @@ def predict_trips(features: TripFeatures):
 
 @app.get("/health")
 def health_check():
-   return {
-       "model_loaded": model is not None,
-       "status": "Model is ready!" if model else "Model failed to load."
-   }
+    return {
+        "model_loaded": model is not None,
+        "status": "✅ Model is ready!" if model else "❌ Model failed to load."
+    }
 
 @app.get("/metrics")
 def get_metrics():
