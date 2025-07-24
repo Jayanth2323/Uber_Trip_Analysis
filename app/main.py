@@ -145,7 +145,7 @@ def export_pdf():
             pdf.add_page()
             pdf.set_font("Arial", "B", 16)
             pdf.cell(0, 10, f"❌ {plot}.png not found", ln=True, align='C')
-
+            
     now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     pdf_path = f"plots/Uber_Trip_Report_{now}.pdf"
     pdf.output(pdf_path)
