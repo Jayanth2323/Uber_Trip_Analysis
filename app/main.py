@@ -243,8 +243,7 @@ def dashboard():
                     document.getElementById(`tab${{index}}`).classList.add('active');
                 }});
             }});
-        </script>
-        <script>
+
         // === Tab Switching ===
         document.querySelectorAll('nav li').forEach((tab, index) => {
             tab.addEventListener('click', () => {
