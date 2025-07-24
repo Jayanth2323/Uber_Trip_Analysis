@@ -9,52 +9,62 @@ from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fpdf import FPDF
 
 app = FastAPI(
-   title="Uber Trip Forecasting API",
-   description="Forecast daily Uber trip counts using FOIL dataset features + premium dashboard",
-   version="3.1.0",
+    title="Uber Trip Forecasting API",
+    description="Forecast daily Uber trip counts using FOIL dataset features + premium dashboard",
+    version="3.1.0",
 )
 
+
 class TripFeatures(BaseModel):
-   hour: int
-   day: int
-   day_of_week: int
-   month: int
-   active_vehicles: int
+    hour: int
+    day: int
+    day_of_week: int
+    month: int
+    active_vehicles: int
+
 
 # Load model
 try:
-   model = load_model()
+    model = load_model()
 except Exception as e:
-   model = None
-   print("âš ï¸ Model load error:", e)
+    model = None
+    print("âš ï¸ Model load error:", e)
+
 
 @app.get("/", response_class=HTMLResponse)
 def dashboard():
-   plots = [
-       ("Forecast Models", ["xgb_vs_actual", "rf_vs_actual", "ensemble_vs_actual"]),
-       ("Exploration", ["trips_per_hour", "trips_per_day"]),
-       ("Time Series", ["train_test_split", "decomposition"]),
-       ("Explainability", ["shap_summary"])
-   ]
+    plots = [
+        ("Forecast Models", ["xgb_vs_actual", "rf_vs_actual", "ensemble_vs_actual"]),
+        ("Exploration", ["trips_per_hour", "trips_per_day"]),
+        ("Time Series", ["train_test_split", "decomposition"]),
+        ("Explainability", ["shap_summary"]),
+    ]
 
-   # Load plot blocks
-   tab_headers = ""
-   tab_contents = ""
-   for idx, (tab_name, plot_keys) in enumerate(plots):
-       active_class = "active" if idx == 0 else ""
-       tab_id = f"tab{idx}"
-       tab_headers += f"<li class='{active_class}' data-tab='{tab_id}'>{tab_name}</li>"
-       tab_html = ""
-       for plot in plot_keys:
-           path = os.path.join("plots", f"{plot}.html")
-           if os.path.exists(path):
-               with open(path, "r") as f:
-                   body = f.read()
-                   inner = body.split("<body>")[1].split("</body>")[0] if "<body>" in body else body
-                   tab_html += f"<div class='plot-card'><h2>{plot.replace('_', ' ').title()}</h2>{inner}</div>"
-           else:
-               tab_html += f"<div class='plot-card'><h2>{plot.replace('_', ' ').title()}</h2><p>❌ Plot not found</p></div>"
-       tab_contents += f"<div class='tab-content {active_class}' id='{tab_id}'>{tab_html}</div>"
+    # Load plot blocks
+    tab_headers = ""
+    tab_contents = ""
+    for idx, (tab_name, plot_keys) in enumerate(plots):
+        active_class = "active" if idx == 0 else ""
+        tab_id = f"tab{idx}"
+        tab_headers += f"<li class='{active_class}' data-tab='{tab_id}'>{tab_name}</li>"
+        tab_html = ""
+        for plot in plot_keys:
+            path = os.path.join("plots", f"{plot}.html")
+            if os.path.exists(path):
+                with open(path, "r") as f:
+                    body = f.read()
+                    inner = (
+                        body.split("<body>")[1].split("</body>")[0]
+                        if "<body>" in body
+                        else body
+                    )
+                    tab_html += f"<div class='plot-card'><h2>{plot.replace('_', ' ').title()}</h2>{inner}</div>"
+            else:
+                tab_html += f"<div class='plot-card'><h2>{plot.replace('_', ' ').title()}</h2><p>❌ Plot not found</p></div>"
+        tab_contents += (
+            f"<div class='tab-content {active_class}' id='{tab_id}'>{tab_html}</div>"
+        )
+
 
 #    html = f"""
 #    <!DOCTYPE html>
@@ -111,11 +121,11 @@ def dashboard():
 #         document.body.classList.add('dark');
 #         toggle.checked = true;
 #         }
-        
+
 #         toggle.addEventListener('change', () => {
 #             document.body.classList.toggle('dark');
 #             localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
-#         });   
+#         });
 
 #         document.querySelectorAll('nav li').forEach((tab, index) => {
 #             tab.addEventListener('click', () => {
@@ -292,55 +302,70 @@ html = f"""
 </body>
 </html>
 """
-    return HTMLResponse(content=html)
+return HTMLResponse(content=html)
 
 
 @app.post("/predict")
 def predict_trips(features: TripFeatures):
-   if not model:
-       return {"error": "Model not loaded."}
-   try:
-       input_data = np.array([[features.hour, features.day, features.day_of_week,
-                               features.month, features.active_vehicles]])
-       prediction = model.predict(input_data)[0]
-       return {
-           "predicted_trips": round(float(prediction), 2),
-           "inputs": features.dict()
-       }
-   except Exception as e:
-       return {"error": str(e)}
+    if not model:
+        return {"error": "Model not loaded."}
+    try:
+        input_data = np.array(
+            [
+                [
+                    features.hour,
+                    features.day,
+                    features.day_of_week,
+                    features.month,
+                    features.active_vehicles,
+                ]
+            ]
+        )
+        prediction = model.predict(input_data)[0]
+        return {
+            "predicted_trips": round(float(prediction), 2),
+            "inputs": features.dict(),
+        }
+    except Exception as e:
+        return {"error": str(e)}
+
 
 @app.get("/health")
 def health_check():
     return {
         "model_loaded": model is not None,
-        "status": "✅ Model is ready!" if model else "❌ Model failed to load."
+        "status": "✅ Model is ready!" if model else "❌ Model failed to load.",
     }
+
 
 @app.get("/metrics")
 def get_metrics():
-   return {
-       "status": "Model metrics loaded successfully",
-       "MAPE (%)": {
-           "XGBoost": 8.37,
-           "Random Forest": 9.61,
-           "GBRT": 10.02,
-           "Ensemble": 8.60
-       }
-   }
+    return {
+        "status": "Model metrics loaded successfully",
+        "MAPE (%)": {
+            "XGBoost": 8.37,
+            "Random Forest": 9.61,
+            "GBRT": 10.02,
+            "Ensemble": 8.60,
+        },
+    }
+
 
 @app.get("/plots/{plot_name}", response_class=HTMLResponse)
 def serve_plot(plot_name: str):
-   html_path = os.path.join("plots", f"{plot_name}.html")
-   if os.path.exists(html_path):
-       with open(html_path, "r") as f:
-           return HTMLResponse(content=f.read())
+    html_path = os.path.join("plots", f"{plot_name}.html")
+    if os.path.exists(html_path):
+        with open(html_path, "r") as f:
+            return HTMLResponse(content=f.read())
 
-   png_path = os.path.join("plots", f"{plot_name}.png")
-   if os.path.exists(png_path):
-       return FileResponse(png_path, media_type="image/png")
+    png_path = os.path.join("plots", f"{plot_name}.png")
+    if os.path.exists(png_path):
+        return FileResponse(png_path, media_type="image/png")
 
-   return JSONResponse(status_code=404, content={"error": f"Plot {plot_name} not found."})
+    return JSONResponse(
+        status_code=404, content={"error": f"Plot {plot_name} not found."}
+    )
+
 
 @app.get("/export/pdf")
 def export_pdf():
@@ -350,9 +375,14 @@ def export_pdf():
     pdf.cell(200, 10, txt="Uber Trip Forecasting - Plots Summary", ln=True, align="C")
 
     plot_images = [
-        "xgb_vs_actual.png", "rf_vs_actual.png", "ensemble_vs_actual.png",
-        "trips_per_hour.png", "trips_per_day.png",
-        "train_test_split.png", "decomposition.png", "shap_summary.png"
+        "xgb_vs_actual.png",
+        "rf_vs_actual.png",
+        "ensemble_vs_actual.png",
+        "trips_per_hour.png",
+        "trips_per_day.png",
+        "train_test_split.png",
+        "decomposition.png",
+        "shap_summary.png",
     ]
 
     missing_plots = []
@@ -365,18 +395,27 @@ def export_pdf():
             missing_plots.append(plot)
             pdf.add_page()
             pdf.set_font("Arial", size=12)
-            pdf.cell(200, 20, txt=f"⚠️ {plot} not found. Please generate it using generate_plots.py", ln=True, align="C")
+            pdf.cell(
+                200,
+                20,
+                txt=f"⚠️ {plot} not found. Please generate it using generate_plots.py",
+                ln=True,
+                align="C",
+            )
 
     out_path = "plots/uber_dashboard_report.pdf"
     pdf.output(out_path)
 
     if missing_plots:
-        print("⚠️ Warning: The following plots were not found and were skipped in the PDF:")
+        print(
+            "⚠️ Warning: The following plots were not found and were skipped in the PDF:"
+        )
         for p in missing_plots:
             print("   -", p)
         print("➡️  You may need to install Chrome and run:")
         print("   $ plotly_get_chrome")
         print("   or modify generate_plots.py to avoid saving PNGs if not needed.")
 
-    return FileResponse(out_path, media_type="application/pdf", filename="uber_dashboard_report.pdf")
-
+    return FileResponse(
+        out_path, media_type="application/pdf", filename="uber_dashboard_report.pdf"
+    )
