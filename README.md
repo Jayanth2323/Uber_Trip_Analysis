@@ -74,5 +74,5 @@ Data Source: [NYC TLC + FiveThirtyEight](https://github.com/fivethirtyeight/uber
   "day": 12,
   "day_of_week": 2,
   "month": 5,
-  "active_vehicles": 4120
+  "active_vehicles": 4100
 }
