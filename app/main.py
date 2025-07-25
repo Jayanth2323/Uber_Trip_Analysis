@@ -46,10 +46,10 @@ def dashboard():
     for idx, (tab_name, plot_keys) in enumerate(plots):
         active_class = "active" if idx == 0 else ""
         tab_id = f"tab{idx}"
-        tab_headers += f"<li class='{{active_class}}' data-tab='{{tab_id}}'>{tab_name}</li>"
+        tab_headers += f"<li class='{active_class}' data-tab='{tab_id}'>{tab_name}</li>"
         tab_html = ""
         for plot in plot_keys:
-            path = os.path.join("plots", f"{{plot}}.html")
+            path = os.path.join("plots", f"{plot}.html")
             if os.path.exists(path):
                 with open(path, "r") as f:
                     body = f.read()
@@ -58,11 +58,11 @@ def dashboard():
                         if "<body>" in body
                         else body
                     )
-                    tab_html += f"<div class='plot-card'><h2>{{plot.replace('_', ' ').title()}}</h2>{{inner}}</div>"
+                    tab_html += f"<div class='plot-card'><h2>{plot.replace('_', ' ').title()}</h2>{inner}</div>"
             else:
-                tab_html += f"<div class='plot-card'><h2>{{plot.replace('_', ' ').title()}}</h2><p>❌ Plot not found</p></div>"
+                tab_html += f"<div class='plot-card'><h2>{plot.replace('_', ' ').title()}</h2><p>❌ Plot not found</p></div>"
         tab_contents += (
-            f"<div class='tab-content {{active_class}}' id='{{tab_id}}'>{{tab_html}}</div>"
+            f"<div class='tab-content {active_class}' id='{tab_id}'>{tab_html}</div>"
         )
 
     html = f"""
@@ -240,7 +240,7 @@ def dashboard():
                     document.querySelectorAll('nav li').forEach(t => t.classList.remove('active'));
                     document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
                     tab.classList.add('active');
-                    document.getElementById(`tab${{index}}`).classList.add('active');
+                    document.getElementById(`tab${index}`).classList.add('active');
                 }});
             }});
 
@@ -262,7 +262,7 @@ def dashboard():
             plotlyFrames.forEach(iframe => {{
                 iframe.contentWindow?.Plotly?.relayout?.(
                     iframe.contentWindow.document.querySelector("div.js-plotly-plot"),
-                    {{ template: dark ? "plotly_dark" : "plotly_white" }}
+                    { template: dark ? "plotly_dark" : "plotly_white" }
                 );
             }});
         }};
