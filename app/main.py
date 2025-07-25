@@ -45,7 +45,7 @@ def dashboard():
     tab_contents = ""
     for idx, (tab_name, plot_keys) in enumerate(plots):
         active_class = "active" if idx == 0 else ""
-        tab_id = f"tab{{idx}}"
+        tab_id = f"tab{idx}"
         tab_headers += f"<li class='{{active_class}}' data-tab='{{tab_id}}'>{tab_name}</li>"
         tab_html = ""
         for plot in plot_keys:
@@ -83,7 +83,7 @@ def dashboard():
             body.dark {{
                 --bg: #1e272e;
                 --text: #f5f6fa;
-                # --card: #2f3640;
+                /* --card: #2f3640; */
                 --primary: #00a8ff;
                 --nav: #353b48;
             }}
@@ -230,7 +230,7 @@ def dashboard():
                     toggle.checked = true;
                 }}
                 toggle.addEventListener('change', () => {{
-                    document.body.classList.toggle('dark', dark);
+                    document.body.classList.toggle('dark');
                     localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
                 }});
             }}
@@ -254,7 +254,7 @@ def dashboard():
         document.body.appendChild(themeToggle);
 
         const setTheme = (dark) => {{
-            document.body.classList.toggle('dark', dark);
+            document.body.classList.toggle('dark');
             localStorage.setItem('theme', dark ? 'dark' : 'light');
 
             // update plot themes
