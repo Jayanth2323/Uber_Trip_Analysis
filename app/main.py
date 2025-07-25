@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from app.model import load_model
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fpdf import FPDF
+from string import Template
 
 app = FastAPI(
     title="Uber Trip Forecasting API",
@@ -66,7 +67,7 @@ def dashboard():
             f"<div class='tab-content {active_class}' id='{tab_id}'>{tab_html}</div>"
         )
 
-    html = f"""
+    template = Template("""
     <!DOCTYPE html>
     <html lang='en'>
     <head>
@@ -74,66 +75,65 @@ def dashboard():
         <title>Uber Trip Forecasting Dashboard</title>
         <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
         <style>
-            :root {{
+            :root {
                 --bg: #f1f2f6;
                 --text: #2c3e50;
                 --card: #ffffff;
                 --primary: #0984e3;
                 --nav: #dcdde1;
-            }}
-            body.dark {{
+            }
+            body.dark {
                 --bg: #1e272e;
                 --text: #f5f6fa;
-                /* --card: #2f3640; */
                 --primary: #00a8ff;
                 --nav: #353b48;
-            }}
-            body {{
+            }
+            body {
                 font-family: 'Segoe UI', sans-serif;
                 margin: 0;
                 background: var(--bg);
                 color: var(--text);
                 transition: background 0.3s, color 0.3s;
-            }}
-            header {{
+            }
+            header {
                 background: var(--text);
                 color: var(--card);
                 padding: 20px;
                 text-align: center;
                 font-size: 2em;
                 position: relative;
-            }}
-            .theme-toggle {{
+            }
+            .theme-toggle {
                 position: absolute;
                 top: 20px;
                 right: 20px;
-            }}
-            nav {{
+            }
+            nav {
                 display: flex;
                 justify-content: center;
                 background: var(--nav);
                 padding: 10px 0;
-            }}
-            nav ul {{
+            }
+            nav ul {
                 list-style: none;
                 display: flex;
                 padding: 0;
                 margin: 0;
-            }}
-            nav li {{
+            }
+            nav li {
                 padding: 10px 20px;
                 cursor: pointer;
                 border-radius: 6px;
                 margin: 0 5px;
                 background: #dfe6e9;
                 transition: 0.2s;
-            }}
+            }
             nav li.active,
-            nav li:hover {{
+            nav li:hover {
                 background: var(--primary);
                 color: black;
-            }}
-            .tab-content {{
+            }
+            .tab-content {
                 display: none;
                 padding: 30px;
                 max-width: 1200px;
@@ -142,23 +142,23 @@ def dashboard():
                 border-radius: 8px;
                 box-shadow: 0 2px 10px rgba(0,0,0,0.1);
                 margin-top: 20px;
-            }}
-            .tab-content.active {{
+            }
+            .tab-content.active {
                 display: block;
-            }}
-            .plot-card {{
+            }
+            .plot-card {
                 margin-bottom: 40px;
-            }}
-            h2 {{
+            }
+            h2 {
                 color: var(--primary);
                 margin-bottom: 10px;
                 text-align: center;
-            }}
-            .actions {{
+            }
+            .actions {
                 text-align: center;
                 margin-top: 20px;
-            }}
-            .btn {{
+            }
+            .btn {
                 background: #00cec9;
                 color: white;
                 padding: 10px 20px;
@@ -166,40 +166,40 @@ def dashboard():
                 border-radius: 6px;
                 font-size: 16px;
                 cursor: pointer;
-            }}
-            .btn:hover {{
+            }
+            .btn:hover {
                 background: var(--primary);
-            }}
-            footer {{
+            }
+            footer {
                 text-align: center;
                 padding: 20px;
                 background: var(--text);
                 color: var(--card);
                 margin-top: 40px;
-            }}
-            .dark {{
+            }
+            .dark {
                 background: #1e272e;
                 color: #dcdde1;
-            }}
-            .dark .tab-content {{
+            }
+            .dark .tab-content {
                 background: #2f3640;
                 color: #f5f6fa;
-            }}
+            }
             .dark header,
-            .dark footer {{
+            .dark footer {
                 background: #1e272e;
-            }}
-            .dark nav {{
+            }
+            .dark nav {
                 background: #2d3436;
-            }}
-            .dark nav li {{
+            }
+            .dark nav li {
                 background: #636e72;
-            }}
+            }
             .dark nav li.active,
-            .dark nav li:hover {{
+            .dark nav li:hover {
                 background: #00cec9;
                 color: #1e272e;
-            }}
+            }
         </style>
     </head>
     <body>
@@ -209,10 +209,10 @@ def dashboard():
         </header>
         <nav>
             <ul>
-                {tab_headers}
+                tab_headers
             </ul>
         </nav>
-        {tab_contents}
+        tab_contents
         <div class="actions">
             <form action="/export/pdf">
                 <button class="btn" type="submit">📄 Export All Plots to PDF</button>
@@ -221,53 +221,52 @@ def dashboard():
         <footer>Built by Jayanth Chennoju | Tools: FastAPI, XGBoost, Plotly, SHAP, Render</footer>
 
         <script>
-            const toggle = document.getElementById('toggle-theme');
-            if (toggle) {{
-                const currentTheme = localStorage.getItem('theme');
-                if (currentTheme === 'dark') {{
-                    document.body.classList.add('dark');
-                    toggle.checked = true;
-                }}
-                toggle.addEventListener('change', () => {{
-                    document.body.classList.toggle('dark');
-                    localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
-                }});
-            }}
+            // Tabs
+            document.querySelectorAll('nav li').forEach((tab, index) => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('nav li').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.getElementById("tab" + index).classList.add('active');
+                });
+            });
 
-    document.querySelectorAll('nav li').forEach((tab, index) => {{
-        tab.addEventListener('click', function() {{
-            document.querySelectorAll('nav li').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
-            tab.classList.add('active');
-            document.getElementById("tab" + index).classList.add('active');
-        }});
-    }});
+            const setTheme = (dark) => {
+                document.body.classList.toggle('dark', dark);
+                localStorage.setItem('theme', dark ? 'dark' : 'light');
 
-    const setTheme = (dark) => {{
-        document.body.classList.toggle('dark', dark);
-        localStorage.setItem('theme', dark ? 'dark' : 'light');
+                document.querySelectorAll("div.js-plotly-plot").forEach(div => {
+                    if (window.plotly && window.plotly.relayout) {
+                        window.plotly.relayout(div, { template: dark ? "plotly_dark" : "plotly_white" });
+                    }
+                });
 
-        const plotlyFrames = document.querySelectorAll("iframe");
-        plotlyFrames.forEach(iframe => {
-            iframe.contentWindow?.Plotly?.relayout?.(
-                iframe.contentWindow.document.querySelector("div.js-plotly-plot"),
-                { template: dark ? "plotly_dark" : "plotly_white" }
-            );
-        });
-    }};
+                document.querySelectorAll("iframe").forEach(iframe => {
+                    try {
+                        const win = iframe.contentWindow;
+                        const plotDiv = win?.document?.querySelector("div.js-plotly-plot");
+                        if (win?.Plotly?.relayout && plotDiv) {
+                            win.Plotly.relayout(plotDiv, { template: dark ? "plotly_dark" : "plotly_white" });
+                        }
+                    } catch (e) {}
+                });
+            };
 
+            const savedTheme = localStorage.getItem('theme') === 'dark';
+            setTheme(savedTheme);
 
-        const savedTheme = localStorage.getItem('theme') === 'dark';
-        setTheme(savedTheme);
-
-        document.getElementById('theme-toggle').addEventListener('click', () => {
-            const darkMode = !document.body.classList.contains('dark');
-            setTheme(darkMode);
-        });
-    </script>
+            document.getElementById('theme-toggle').addEventListener('click', () => {
+                const darkMode = !document.body.classList.contains('dark');
+                setTheme(darkMode);
+            });
+        </script>
     </body>
     </html>
-    """
+    """)
+    html = template.substitute(
+        tab_headers=tab_headers,
+        tab_contents=tab_contents,
+    )
     return HTMLResponse(content=html)
 
 
