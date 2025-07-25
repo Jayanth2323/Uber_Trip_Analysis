@@ -327,9 +327,9 @@ def get_metrics():
     }}
 
 
-@app.get("/plots/{{plot_name}}", response_class=HTMLResponse)
+@app.get("/plots/{plot_name}", response_class=HTMLResponse)
 def serve_plot(plot_name: str):
-    html_path = os.path.join("plots", f"{{plot_name}}.html")
+    html_path = os.path.join("plots", f"{plot_name}.html")
     if os.path.exists(html_path):
         with open(html_path, "r") as f:
             return HTMLResponse(content=f.read())
