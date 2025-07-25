@@ -205,7 +205,8 @@ def dashboard():
         <header>
             📊 Uber Trip Forecasting Dashboard
             <div class="theme-toggle">
-                <label for="toggle-theme">🌓</label>
+            <input type="checkbox" id="toggle-theme" style="display: none;" />
+            <label for="toggle-theme">🌓</label>
             </div>
         </header>
         <nav>
@@ -303,15 +304,15 @@ def predict_trips(features: TripFeatures):
             "inputs": features.dict(),
         }}
     except Exception as e:
-        return {{"error": str(e)}}
+        return {"error": str(e)}
 
 
 @app.get("/health")
 def health_check():
-    return {{
+    return {
         "model_loaded": model is not None,
         "status": "✅ Model is ready!" if model else "❌ Model failed to load.",
-    }}
+    }
 
 
 @app.get("/metrics")
@@ -334,7 +335,7 @@ def serve_plot(plot_name: str):
         with open(html_path, "r") as f:
             return HTMLResponse(content=f.read())
 
-    png_path = os.path.join("plots", f"{{plot_name}}.png")
+    png_path = os.path.join("plots", f"{plot_name}.png")
     if os.path.exists(png_path):
         return FileResponse(png_path, media_type="image/png")
 
