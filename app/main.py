@@ -237,14 +237,14 @@ def dashboard():
                 }});
             }}
 
-            document.querySelectorAll('nav li').forEach((tab, index) => {
-                tab.addEventListener('click', () => {
-                    document.querySelectorAll('nav li').forEach(t => t.classList.remove('active'));
-                    document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
-                    tab.classList.add('active');
-                    document.getElementById("tab" + index).classList.add('active');                
-                    });
-            });
+    document.querySelectorAll('nav li').forEach((tab, index) => {{
+        tab.addEventListener('click', function() {{
+            document.querySelectorAll('nav li').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+            tab.classList.add('active');
+            document.getElementById("tab" + index).classList.add('active');
+        }});
+    }});
 
         // === Theme Toggle ===
         const themeToggle = document.createElement('button');
@@ -255,19 +255,18 @@ def dashboard():
         themeToggle.style.right = '20px';
         document.body.appendChild(themeToggle);
 
-        const setTheme = (dark) => {{
-            document.body.classList.toggle('dark');
-            localStorage.setItem('theme', dark ? 'dark' : 'light');
+    const setTheme = (dark) => {{
+        document.body.classList.toggle('dark', dark);
+        localStorage.setItem('theme', dark ? 'dark' : 'light');
 
-            // update plot themes
-            const plotlyFrames = document.querySelectorAll("iframe");
-            plotlyFrames.forEach(iframe => {{
-                iframe.contentWindow?.Plotly?.relayout?.(
-                    iframe.contentWindow.document.querySelector("div.js-plotly-plot"),
-                    { template: dark ? "plotly_dark" : "plotly_white" }
-                );
-            }});
-        }};
+        const plotlyFrames = document.querySelectorAll("iframe");
+        plotlyFrames.forEach(iframe => {{
+            iframe.contentWindow?.Plotly?.relayout?.(
+                iframe.contentWindow.document.querySelector("div.js-plotly-plot"),
+                {{ template: dark ? "plotly_dark" : "plotly_white" }}
+            );
+        }});
+    }};
 
         const savedTheme = localStorage.getItem('theme') === 'dark';
         setTheme(savedTheme);
