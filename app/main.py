@@ -234,14 +234,14 @@ def dashboard():
                 }});
             }}
 
-    document.querySelectorAll('nav li').forEach((tab, index) => {
-        tab.addEventListener('click', function() {
+    document.querySelectorAll('nav li').forEach((tab, index) => {{
+        tab.addEventListener('click', function() {{
             document.querySelectorAll('nav li').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
             tab.classList.add('active');
             document.getElementById("tab" + index).classList.add('active');
-        });
-    });
+        }});
+    }});
 
     const setTheme = (dark) => {
         document.body.classList.toggle('dark', dark);
