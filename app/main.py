@@ -310,6 +310,9 @@ def predict_trips(features: TripFeatures):
 
 @app.get("/health")
 def health_check():
+    if model is None:
+        return JSONResponse(status_code=500, content={"error": "Model not loaded."})  # <== Fix indentation here
+
     return {
         "model_loaded": model is not None,
         "status": "✅ Model is ready!" if model else "❌ Model failed to load.",
@@ -318,6 +321,9 @@ def health_check():
 
 @app.get("/metrics")
 def get_metrics():
+    if model is None:
+        return JSONResponse(status_code=500, content={"error": "Model not loaded."})  # <== Fix indentation here
+
     return {
         "status": "Model metrics loaded successfully",
         "MAPE (%)": {
