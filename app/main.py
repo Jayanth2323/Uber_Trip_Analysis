@@ -67,7 +67,7 @@ def dashboard():
             f"<div class='tab-content {active_class}' id='{tab_id}'>{tab_html}</div>"
         )
 
-    template = Template("""
+    template = Template(r"""
     <!DOCTYPE html>
     <html lang='en'>
     <head>
@@ -334,7 +334,7 @@ def serve_plot(plot_name: str):
         return FileResponse(png_path, media_type="image/png")
 
     return JSONResponse(
-        status_code=404, content={{"error": f"Plot {{plot_name}} not found."}}
+        status_code=404, content={"error": f"Plot {plot_name} not found."}
     )
 
 
