@@ -234,27 +234,28 @@ def dashboard():
                 }});
             }}
 
-    document.querySelectorAll('nav li').forEach((tab, index) => {{
-        tab.addEventListener('click', function() {{
+    document.querySelectorAll('nav li').forEach((tab, index) => {
+        tab.addEventListener('click', function() {
             document.querySelectorAll('nav li').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
             tab.classList.add('active');
             document.getElementById("tab" + index).classList.add('active');
-        }});
-    }});
+        });
+    });
 
-    const setTheme = (dark) => {{
+    const setTheme = (dark) => {
         document.body.classList.toggle('dark', dark);
         localStorage.setItem('theme', dark ? 'dark' : 'light');
 
         const plotlyFrames = document.querySelectorAll("iframe");
-        plotlyFrames.forEach(iframe => {{
+        plotlyFrames.forEach(iframe => {
             iframe.contentWindow?.Plotly?.relayout?.(
                 iframe.contentWindow.document.querySelector("div.js-plotly-plot"),
-                {{ template: dark ? "plotly_dark" : "plotly_white" }}
+                { template: dark ? "plotly_dark" : "plotly_white" }
             );
-        }});
-    }};
+        });
+    };
+
 
         const savedTheme = localStorage.getItem('theme') === 'dark';
         setTheme(savedTheme);
