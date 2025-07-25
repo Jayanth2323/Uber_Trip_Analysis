@@ -65,7 +65,7 @@ def dashboard():
                 tab_html += f"<div class='plot-card'><h2>{plot.replace('_', ' ').title()}</h2><p>❌ Plot not found</p></div>"
         tab_contents += f"<div class='tab-content {active_class}' id='{tab_id}'>{tab_html}</div>"
 
-    template = Template(r"""
+    template = Template("""
     <!DOCTYPE html>
     <html lang='en'>
     <head>
