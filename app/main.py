@@ -286,26 +286,26 @@ def dashboard():
 @app.post("/predict")
 def predict_trips(features: TripFeatures):
     if model is None:
-    return JSONResponse(status_code=500, content={"error": "Model not loaded."})
-    try:
-        input_data = np.array(
-            [
+        return JSONResponse(status_code=500, content={"error": "Model not loaded."})
+        try:
+            input_data = np.array(
                 [
-                    features.hour,
-                    features.day,
-                    features.day_of_week,
-                    features.month,
-                    features.active_vehicles,
+                    [
+                        features.hour,
+                        features.day,
+                        features.day_of_week,
+                        features.month,
+                        features.active_vehicles,
+                    ]
                 ]
-            ]
-        )
-        prediction = model.predict(input_data)[0]
-        return {
-            "predicted_trips": round(float(prediction), 2),
-            "inputs": features.dict(),
-        }
-    except Exception as e:
-        return {"error": str(e)}
+            )
+            prediction = model.predict(input_data)[0]
+            return {
+                "predicted_trips": round(float(prediction), 2),
+                "inputs": features.dict(),
+            }
+        except Exception as e:
+            return {"error": str(e)}
 
 
 @app.get("/health")
