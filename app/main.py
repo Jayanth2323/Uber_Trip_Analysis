@@ -46,7 +46,7 @@ def dashboard():
     for idx, (tab_name, plot_keys) in enumerate(plots):
         active_class = "active" if idx == 0 else ""
         tab_id = f"tab{{idx}}"
-        tab_headers += f"<li class='{{active_class}}' data-tab='{{tab_id}}'>{{tab_name}}</li>"
+        tab_headers += f"<li class='{{active_class}}' data-tab='{{tab_id}}'>{tab_name}</li>"
         tab_html = ""
         for plot in plot_keys:
             path = os.path.join("plots", f"{{plot}}.html")
