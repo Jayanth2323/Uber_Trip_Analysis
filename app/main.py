@@ -243,7 +243,7 @@ def dashboard():
         }});
     }});
 
-    const setTheme = (dark) => {
+    const setTheme = (dark) => {{
         document.body.classList.toggle('dark', dark);
         localStorage.setItem('theme', dark ? 'dark' : 'light');
 
@@ -254,7 +254,7 @@ def dashboard():
                 { template: dark ? "plotly_dark" : "plotly_white" }
             );
         });
-    };
+    }};
 
 
         const savedTheme = localStorage.getItem('theme') === 'dark';
