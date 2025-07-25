@@ -107,8 +107,6 @@ def dashboard():
                 position: absolute;
                 top: 20px;
                 right: 20px;
-                font-size: 1.5em;
-                cursor: pointer;
             }}
             nav {{
                 display: flex;
@@ -247,6 +245,14 @@ def dashboard():
             document.getElementById("tab" + index).classList.add('active');
         }});
     }});
+
+        // === Theme Toggle ===
+        const themeToggle = document.createElement('button');
+        themeToggle.className = 'btn';
+        themeToggle.style.position = 'fixed';
+        themeToggle.style.top = '20px';
+        themeToggle.style.right = '20px';
+        document.body.appendChild(themeToggle);
 
     const setTheme = (dark) => {{
         document.body.classList.toggle('dark', dark);
