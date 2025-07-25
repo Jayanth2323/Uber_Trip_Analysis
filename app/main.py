@@ -205,10 +205,7 @@ def dashboard():
     <body>
         <header>
             📊 Uber Trip Forecasting Dashboard
-            <div class="theme-toggle">
-            <input id="toggle-theme" style="display: none;" />
-            <label for="toggle-theme">🌓</label>
-            </div>
+            <div class="theme-toggle" id="theme-toggle" title="Toggle dark mode">🌓</div>
         </header>
         <nav>
             <ul>
@@ -245,14 +242,6 @@ def dashboard():
             document.getElementById("tab" + index).classList.add('active');
         }});
     }});
-
-        // === Theme Toggle ===
-        const themeToggle = document.createElement('button');
-        themeToggle.className = 'btn';
-        themeToggle.style.position = 'fixed';
-        themeToggle.style.top = '20px';
-        themeToggle.style.right = '20px';
-        document.body.appendChild(themeToggle);
 
     const setTheme = (dark) => {{
         document.body.classList.toggle('dark', dark);
