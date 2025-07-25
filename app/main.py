@@ -246,6 +246,14 @@ def dashboard():
         }});
     }});
 
+        // === Theme Toggle ===
+        const themeToggle = document.createElement('button');
+        themeToggle.className = 'btn';
+        themeToggle.style.position = 'fixed';
+        themeToggle.style.top = '20px';
+        themeToggle.style.right = '20px';
+        document.body.appendChild(themeToggle);
+
     const setTheme = (dark) => {{
         document.body.classList.toggle('dark', dark);
         localStorage.setItem('theme', dark ? 'dark' : 'light');
