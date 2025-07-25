@@ -26,9 +26,10 @@ class TripFeatures(BaseModel):
 # Load model
 try:
     model = load_model()
+    print("✅ Model loaded successfully")
 except Exception as e:
     model = None
-    print("âš ï¸ Model load error:", e)
+    print("❌ Model failed to load:", str(e))
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -284,8 +285,8 @@ def dashboard():
 
 @app.post("/predict")
 def predict_trips(features: TripFeatures):
-    if not model:
-        return {{"error": "Model not loaded."}}
+    if model is None:
+    return JSONResponse(status_code=500, content={"error": "Model not loaded."})
     try:
         input_data = np.array(
             [
@@ -299,10 +300,10 @@ def predict_trips(features: TripFeatures):
             ]
         )
         prediction = model.predict(input_data)[0]
-        return {{
+        return {
             "predicted_trips": round(float(prediction), 2),
             "inputs": features.dict(),
-        }}
+        }
     except Exception as e:
         return {"error": str(e)}
 
@@ -317,15 +318,15 @@ def health_check():
 
 @app.get("/metrics")
 def get_metrics():
-    return {{
+    return {
         "status": "Model metrics loaded successfully",
-        "MAPE (%)": {{
+        "MAPE (%)": {
             "XGBoost": 8.37,
             "Random Forest": 9.61,
             "GBRT": 10.02,
             "Ensemble": 8.60,
-        }},
-    }}
+        },
+    }
 
 
 @app.get("/plots/{plot_name}", response_class=HTMLResponse)
