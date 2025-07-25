@@ -107,6 +107,8 @@ def dashboard():
                 position: absolute;
                 top: 20px;
                 right: 20px;
+                font-size: 1.5em;
+                cursor: pointer;
             }}
             nav {{
                 display: flex;
