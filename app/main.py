@@ -107,6 +107,7 @@ def dashboard():
                 position: absolute;
                 top: 20px;
                 right: 20px;
+                cursor: pointer;
             }}
             nav {{
                 display: flex;
@@ -206,7 +207,7 @@ def dashboard():
         <header>
             📊 Uber Trip Forecasting Dashboard
             <div class="theme-toggle">
-            <input type="checkbox" id="toggle-theme" style="display: none;" />
+            <input id="toggle-theme" style="display: none;" />
             <label for="toggle-theme">🌓</label>
             </div>
         </header>
