@@ -210,10 +210,10 @@ def dashboard():
         </header>
         <nav>
             <ul>
-                {{tab_headers}}
+                {tab_headers}
             </ul>
         </nav>
-        {{tab_contents}}
+        {tab_contents}
         <div class="actions">
             <form action="/export/pdf">
                 <button class="btn" type="submit">📄 Export All Plots to PDF</button>
