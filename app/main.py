@@ -63,9 +63,7 @@ def dashboard():
                     tab_html += f"<div class='plot-card'><h2>{plot.replace('_', ' ').title()}</h2>{inner}</div>"
             else:
                 tab_html += f"<div class='plot-card'><h2>{plot.replace('_', ' ').title()}</h2><p>❌ Plot not found</p></div>"
-        tab_contents += (
-            f"<div class='tab-content {active_class}' id='{tab_id}'>{tab_html}</div>"
-        )
+        tab_contents += f"<div class='tab-content {active_class}' id='{tab_id}'>{tab_html}</div>"
 
     template = Template(r"""
     <!DOCTYPE html>
@@ -236,16 +234,16 @@ def dashboard():
                 localStorage.setItem('theme', dark ? 'dark' : 'light');
 
                 document.querySelectorAll("div.js-plotly-plot").forEach(div => {
-                    if (window.plotly && window.plotly.relayout) {
-                        window.plotly.relayout(div, { template: dark ? "plotly_dark" : "plotly_white" });
+                    if (window.Plotly && window.Plotly.relayout) {
+                        window.Plotly.relayout(div, { template: dark ? "plotly_dark" : "plotly_white" });
                     }
                 });
 
                 document.querySelectorAll("iframe").forEach(iframe => {
                     try {
                         const win = iframe.contentWindow;
-                        const plotDiv = win?.document?.querySelector("div.js-plotly-plot");
-                        if (win?.Plotly?.relayout && plotDiv) {
+                        const plotDiv = win && win.document && win.document.querySelector("div.js-plotly-plot");
+                        if (win && win.Plotly && win.Plotly.relayout && plotDiv) {
                             win.Plotly.relayout(plotDiv, { template: dark ? "plotly_dark" : "plotly_white" });
                         }
                     } catch (e) {}
