@@ -248,7 +248,6 @@ def dashboard():
 
         // === Theme Toggle ===
         const themeToggle = document.createElement('button');
-        themeToggle.className = 'btn';
         themeToggle.style.position = 'fixed';
         themeToggle.style.top = '20px';
         themeToggle.style.right = '20px';
