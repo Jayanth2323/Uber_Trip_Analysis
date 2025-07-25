@@ -8,6 +8,7 @@ from app.model import load_model
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fpdf import FPDF
 from string import Template
+from datetime import datetime
 
 app = FastAPI(
     title="Uber Trip Forecasting API",
