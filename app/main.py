@@ -45,11 +45,11 @@ def dashboard():
     tab_contents = ""
     for idx, (tab_name, plot_keys) in enumerate(plots):
         active_class = "active" if idx == 0 else ""
-        tab_id = f"tab{idx}"
-        tab_headers += f"<li class='{active_class}' data-tab='{tab_id}'>{tab_name}</li>"
+        tab_id = f"tab{{idx}}"
+        tab_headers += f"<li class='{{active_class}}' data-tab='{{tab_id}}'>{{tab_name}}</li>"
         tab_html = ""
         for plot in plot_keys:
-            path = os.path.join("plots", f"{plot}.html")
+            path = os.path.join("plots", f"{{plot}}.html")
             if os.path.exists(path):
                 with open(path, "r") as f:
                     body = f.read()
@@ -58,11 +58,11 @@ def dashboard():
                         if "<body>" in body
                         else body
                     )
-                    tab_html += f"<div class='plot-card'><h2>{plot.replace('_', ' ').title()}</h2>{inner}</div>"
+                    tab_html += f"<div class='plot-card'><h2>{{plot.replace('_', ' ').title()}}</h2>{{inner}}</div>"
             else:
-                tab_html += f"<div class='plot-card'><h2>{plot.replace('_', ' ').title()}</h2><p>❌ Plot not found</p></div>"
+                tab_html += f"<div class='plot-card'><h2>{{plot.replace('_', ' ').title()}}</h2><p>❌ Plot not found</p></div>"
         tab_contents += (
-            f"<div class='tab-content {active_class}' id='{tab_id}'>{tab_html}</div>"
+            f"<div class='tab-content {{active_class}}' id='{{tab_id}}'>{{tab_html}}</div>"
         )
 
     html = f"""
@@ -176,29 +176,29 @@ def dashboard():
                 color: var(--card);
                 margin-top: 40px;
             }}
-            .dark {
+            .dark {{
                 background: #1e272e;
                 color: #dcdde1;
-            }
-            .dark .tab-content {
+            }}
+            .dark .tab-content {{
                 background: #2f3640;
                 color: #f5f6fa;
-            }
+            }}
             .dark header,
-            .dark footer {
+            .dark footer {{
                 background: #1e272e;
-            }
-            .dark nav {
+            }}
+            .dark nav {{
                 background: #2d3436;
-            }
-            .dark nav li {
+            }}
+            .dark nav li {{
                 background: #636e72;
-            }
+            }}
             .dark nav li.active,
-            .dark nav li:hover {
+            .dark nav li:hover {{
                 background: #00cec9;
                 color: #1e272e;
-            }
+            }}
         </style>
     </head>
     <body>
@@ -210,10 +210,10 @@ def dashboard():
         </header>
         <nav>
             <ul>
-                {tab_headers}
+                {{tab_headers}}
             </ul>
         </nav>
-        {tab_contents}
+        {{tab_contents}}
         <div class="actions">
             <form action="/export/pdf">
                 <button class="btn" type="submit">📄 Export All Plots to PDF</button>
@@ -262,7 +262,7 @@ def dashboard():
             plotlyFrames.forEach(iframe => {{
                 iframe.contentWindow?.Plotly?.relayout?.(
                     iframe.contentWindow.document.querySelector("div.js-plotly-plot"),
-                    { template: dark ? "plotly_dark" : "plotly_white" }
+                    {{ template: dark ? "plotly_dark" : "plotly_white" }}
                 );
             }});
         }};
@@ -284,7 +284,7 @@ def dashboard():
 @app.post("/predict")
 def predict_trips(features: TripFeatures):
     if not model:
-        return {"error": "Model not loaded."}
+        return {{"error": "Model not loaded."}}
     try:
         input_data = np.array(
             [
@@ -298,48 +298,48 @@ def predict_trips(features: TripFeatures):
             ]
         )
         prediction = model.predict(input_data)[0]
-        return {
+        return {{
             "predicted_trips": round(float(prediction), 2),
             "inputs": features.dict(),
-        }
+        }}
     except Exception as e:
-        return {"error": str(e)}
+        return {{"error": str(e)}}
 
 
 @app.get("/health")
 def health_check():
-    return {
+    return {{
         "model_loaded": model is not None,
         "status": "✅ Model is ready!" if model else "❌ Model failed to load.",
-    }
+    }}
 
 
 @app.get("/metrics")
 def get_metrics():
-    return {
+    return {{
         "status": "Model metrics loaded successfully",
-        "MAPE (%)": {
+        "MAPE (%)": {{
             "XGBoost": 8.37,
             "Random Forest": 9.61,
             "GBRT": 10.02,
             "Ensemble": 8.60,
-        },
-    }
+        }},
+    }}
 
 
-@app.get("/plots/{plot_name}", response_class=HTMLResponse)
+@app.get("/plots/{{plot_name}}", response_class=HTMLResponse)
 def serve_plot(plot_name: str):
-    html_path = os.path.join("plots", f"{plot_name}.html")
+    html_path = os.path.join("plots", f"{{plot_name}}.html")
     if os.path.exists(html_path):
         with open(html_path, "r") as f:
             return HTMLResponse(content=f.read())
 
-    png_path = os.path.join("plots", f"{plot_name}.png")
+    png_path = os.path.join("plots", f"{{plot_name}}.png")
     if os.path.exists(png_path):
         return FileResponse(png_path, media_type="image/png")
 
     return JSONResponse(
-        status_code=404, content={"error": f"Plot {plot_name} not found."}
+        status_code=404, content={{"error": f"Plot {{plot_name}} not found."}}
     )
 
 
@@ -374,7 +374,7 @@ def export_pdf():
             pdf.cell(
                 200,
                 20,
-                txt=f"⚠️ {plot} not found. Please generate it using generate_plots.py",
+                txt=f"⚠️ {{plot}} not found. Please generate it using generate_plots.py",
                 ln=True,
                 align="C",
             )
