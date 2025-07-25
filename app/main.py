@@ -259,10 +259,10 @@ def dashboard():
         const savedTheme = localStorage.getItem('theme') === 'dark';
         setTheme(savedTheme);
 
-        themeToggle.addEventListener('click', () => {{
+        document.getElementById('theme-toggle').addEventListener('click', () => {
             const darkMode = !document.body.classList.contains('dark');
             setTheme(darkMode);
-        }});
+        });
     </script>
     </body>
     </html>
