@@ -230,52 +230,63 @@ def serve_plot(plot_name: str):
 
 @app.get("/export/pdf")
 def export_pdf():
-    from datetime import datetime
     pdf = FPDF()
     pdf.set_auto_page_break(auto=True, margin=15)
 
-    # Cover
+    # 📄 Cover Page
     pdf.add_page()
-    pdf.set_font("Arial", "B", 16)
+    pdf.set_font("Helvetica", "B", 16)
     pdf.cell(200, 10, txt="📊 Uber Trip Forecasting - Plots Summary", ln=True, align="C")
-    pdf.set_font("Arial", "", 12)
+    pdf.set_font("Helvetica", size=12)
     pdf.ln(10)
-    pdf.cell(200, 8, txt=f"Generated on: {datetime.now():%Y-%m-%d %H:%M:%S}", ln=True, align="C")
+    pdf.cell(200, 10, txt=f"Generated on: {datetime.now():%Y-%m-%d %H:%M:%S}", ln=True, align="C")
     pdf.ln(20)
 
-    plot_list = [
-        ("XGBoost vs Actual", "plots/xgb_vs_actual.png"),
-        ("Random Forest vs Actual", "plots/rf_vs_actual.png"),
-        ("Ensemble vs Actual", "plots/ensemble_vs_actual.png"),
-        ("Trips per Hour", "plots/trips_per_hour.png"),
-        ("Trips per Day", "plots/trips_per_day.png"),
-        ("Train‑Test Split", "plots/train_test_split.png"),
-        ("Time Series Decomposition", "plots/decomposition.png"),
-        ("SHAP Summary", "plots/shap_summary.png"),
+    # 📊 Plots to include (based on your repo structure)
+    plot_images = [
+        ("XGBoost vs Actual", "xgb_vs_actual.png"),
+        ("Random Forest vs Actual", "rf_vs_actual.png"),
+        ("Ensemble vs Actual", "ensemble_vs_actual.png"),
+        ("Trips per Hour", "trips_per_hour.png"),
+        ("Trips per Day", "trips_per_day.png"),
+        ("Train-Test Split", "train_test_split.png"),
+        ("Time Series Decomposition", "decomposition.png"),
+        ("SHAP Summary", "shap_summary.png"),
     ]
 
     missing = []
-    for title, path in plot_list:
+
+    for title, filename in plot_images:
+        path = os.path.join("plots", filename)
         pdf.add_page()
-        pdf.set_font("Arial", "B", 14)
+        pdf.set_font("Helvetica", "B", 14)
         pdf.cell(200, 10, txt=title, ln=True, align="C")
-        pdf.ln(8)
+        pdf.ln(10)
+
         if os.path.exists(path):
             try:
-                pdf.image(path, x=10, y=pdf.get_y(), w=180)
-            except Exception:
-                pdf.set_font("Arial", "", 12)
-                pdf.cell(200, 10, txt=f"⚠️ Error rendering: {os.path.basename(path)}", ln=True, align="C")
+                pdf.image(path, x=10, y=30, w=180)
+            except RuntimeError as e:
+                pdf.set_font("Helvetica", size=12)
+                pdf.cell(200, 10, txt=f"⚠️ Error loading {filename}", ln=True, align="C")
+                missing.append(filename)
         else:
-            missing.append(os.path.basename(path))
-            pdf.set_font("Arial", "", 12)
-            pdf.cell(200, 10, txt=f"⚠️ {os.path.basename(path)} not found. Generate it first.", ln=True, align="C")
+            pdf.set_font("Helvetica", size=12)
+            pdf.cell(200, 10, txt=f"⚠️ {filename} not found", ln=True, align="C")
+            missing.append(filename)
 
-    output = "plots/uber_dashboard_report.pdf"
-    pdf.output(output)
+    output_path = "plots/uber_dashboard_report.pdf"
+    try:
+        pdf.output(output_path)
+    except Exception as e:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=500, detail=f"PDF generation failed: {str(e)}")
 
-    if missing:
-        print("⚠️ Missing plots:", ", ".join(missing))
-        print("➡️ Ensure your generate_plots.py exports PNGs into the `plots/` folder.")
+    if not os.path.exists(output_path):
+        raise HTTPException(status_code=500, detail="PDF file was not created.")
 
-    return FileResponse(output, media_type="application/pdf", filename="uber_dashboard_report.pdf")
+    return FileResponse(
+        path=output_path,
+        filename="uber_dashboard_report.pdf",
+        media_type="application/pdf"
+    )
