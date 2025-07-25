@@ -231,53 +231,62 @@ def serve_plot(plot_name: str):
 
 @app.get("/export/pdf")
 def export_pdf():
+    from datetime import datetime
+
     pdf = FPDF()
+    pdf.set_auto_page_break(auto=True, margin=15)
+
+    # Cover page
     pdf.add_page()
-    pdf.set_font("Arial", size=16)
-    pdf.cell(200, 10, txt="Uber Trip Forecasting - Plots Summary", ln=True, align="C")
+    pdf.set_font("Arial", "B", 16)
+    pdf.cell(200, 10, txt="📊 Uber Trip Forecasting - Plots Summary", ln=True, align="C")
+    pdf.set_font("Arial", size=12)
+    pdf.ln(10)
+    pdf.cell(200, 10, txt=f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", ln=True, align="C")
+    pdf.ln(20)
 
     plot_images = [
-        "xgb_vs_actual.png",
-        "rf_vs_actual.png",
-        "ensemble_vs_actual.png",
-        "trips_per_hour.png",
-        "trips_per_day.png",
-        "train_test_split.png",
-        "decomposition.png",
-        "shap_summary.png",
+        ("XGBoost vs Actual", "xgb_vs_actual.png"),
+        ("Random Forest vs Actual", "rf_vs_actual.png"),
+        ("Ensemble vs Actual", "ensemble_vs_actual.png"),
+        ("Trips per Hour", "trips_per_hour.png"),
+        ("Trips per Day", "trips_per_day.png"),
+        ("Train-Test Split", "train_test_split.png"),
+        ("Time Series Decomposition", "decomposition.png"),
+        ("SHAP Summary", "shap_summary.png"),
     ]
 
     missing_plots = []
-    for plot in plot_images:
-        path = os.path.join("plots", plot)
+
+    for title, filename in plot_images:
+        path = os.path.join("plots", filename)
+        pdf.add_page()
+        pdf.set_font("Arial", "B", 14)
+        pdf.cell(200, 10, txt=title, ln=True, align="C")
         if os.path.exists(path):
-            pdf.add_page()
-            pdf.image(path, x=10, y=30, w=180)
+            try:
+                pdf.image(path, x=10, y=30, w=180)
+            except RuntimeError as e:
+                pdf.set_font("Arial", size=12)
+                pdf.ln(20)
+                pdf.cell(200, 10, txt=f"⚠️ Error loading image: {filename}", ln=True, align="C")
         else:
-            missing_plots.append(plot)
-            pdf.add_page()
+            missing_plots.append(filename)
             pdf.set_font("Arial", size=12)
-            pdf.cell(
-                200,
-                20,
-                txt=f"⚠️ {plot} not found. Please generate it using generate_plots.py",
-                ln=True,
-                align="C",
-            )
+            pdf.ln(20)
+            pdf.cell(200, 10, txt=f"⚠️ {filename} not found. Please generate it.", ln=True, align="C")
 
     out_path = "plots/uber_dashboard_report.pdf"
     pdf.output(out_path)
 
     if missing_plots:
-        print(
-            "⚠️ Warning: The following plots were not found and were skipped in the PDF:"
-        )
+        print("⚠️ Warning: The following plots were missing and not added to the PDF:")
         for p in missing_plots:
-            print("   -", p)
-        print("➡️  You may need to install Chrome and run:")
-        print("   $ plotly_get_chrome")
-        print("   or modify generate_plots.py to avoid saving PNGs if not needed.")
+            print(f"   - {p}")
+        print("➡️ Tip: Run generate_plots.py or check if PNG export was enabled in Plotly.")
 
     return FileResponse(
-        out_path, media_type="application/pdf", filename="uber_dashboard_report.pdf"
+        out_path,
+        media_type="application/pdf",
+        filename="uber_dashboard_report.pdf",
     )
