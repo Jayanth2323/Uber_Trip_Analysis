@@ -83,7 +83,7 @@ def dashboard():
             body.dark {{
                 --bg: #1e272e;
                 --text: #f5f6fa;
-                --card: #2f3640;
+                # --card: #2f3640;
                 --primary: #00a8ff;
                 --nav: #353b48;
             }}
