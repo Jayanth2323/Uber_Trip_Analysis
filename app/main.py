@@ -244,36 +244,41 @@ def export_pdf():
     pdf.ln(20)
 
     # 📊 Plots to include (based on your repo structure)
-    plot_images = [
-        ("XGBoost vs Actual", "xgb_vs_actual.png"),
-        ("Random Forest vs Actual", "rf_vs_actual.png"),
-        ("Ensemble vs Actual", "ensemble_vs_actual.png"),
-        ("Trips per Hour", "trips_per_hour.png"),
-        ("Trips per Day", "trips_per_day.png"),
-        ("Train-Test Split", "train_test_split.png"),
-        ("Time Series Decomposition", "decomposition.png"),
-        ("SHAP Summary", "shap_summary.png"),
+    plots_with_desc = [
+        ("XGBoost vs Actual", "xgb_vs_actual.png", "Predicted vs actual trip counts using XGBoost model."),
+        ("Random Forest vs Actual", "rf_vs_actual.png", "Forecast comparison using Random Forest model."),
+        ("Ensemble vs Actual", "ensemble_vs_actual.png", "Combined predictions from multiple models."),
+        ("Trips per Hour", "trips_per_hour.png", "Hourly distribution of Uber trips."),
+        ("Trips per Day", "trips_per_day.png", "Daily volume of Uber rides."),
+        ("Train-Test Split", "train_test_split.png", "Dataset partitioning for model training and evaluation."),
+        ("Time Series Decomposition", "decomposition.png", "Trend, seasonality, and residuals in trip data."),
+        ("SHAP Summary", "shap_summary.png", "Feature impact visualization using SHAP values."),
     ]
 
     missing = []
 
-    for title, filename in plot_images:
+    for title, filename, description in plots_with_desc:
         path = os.path.join("plots", filename)
-        pdf.add_page()
-        pdf.set_font("Helvetica", "B", 14)
-        pdf.cell(200, 10, txt=title, ln=True, align="C")
-        pdf.ln(10)
-
         if os.path.exists(path):
+            pdf.add_page()
+            pdf.set_font("Helvetica", "B", 14)
+            pdf.cell(200, 10, txt=title, ln=True, align="C")
+            pdf.set_font("Helvetica", size=11)
+            pdf.multi_cell(0, 8, description, align="C")
+            pdf.ln(5)
             try:
-                pdf.image(path, x=10, y=30, w=180)
+                pdf.image(path, x=10, y=40, w=180)
             except RuntimeError as e:
-                pdf.set_font("Helvetica", size=12)
+                pdf.set_font("Helvetica", size=11)
+                pdf.ln(10)
                 pdf.cell(200, 10, txt=f"⚠️ Error loading {filename}", ln=True, align="C")
                 missing.append(filename)
         else:
-            pdf.set_font("Helvetica", size=12)
-            pdf.cell(200, 10, txt=f"⚠️ {filename} not found", ln=True, align="C")
+            pdf.add_page()
+            pdf.set_font("Helvetica", "B", 14)
+            pdf.cell(200, 10, txt=title, ln=True, align="C")
+            pdf.set_font("Helvetica", size=11)
+            pdf.cell(200, 10, txt=f"⚠️ {filename} not found. Please generate it.", ln=True, align="C")
             missing.append(filename)
 
     output_path = "plots/uber_dashboard_report.pdf"
@@ -287,7 +292,7 @@ def export_pdf():
         raise HTTPException(status_code=500, detail="PDF file was not created.")
 
     return FileResponse(
-        path=output_path,
-        filename="uber_dashboard_report.pdf",
-        media_type="application/pdf"
+        path=out_path,
+        media_type="application/pdf",
+        filename="uber_dashboard_report.pdf"
     )
