@@ -94,21 +94,23 @@ This project leverages historical Uber FOIL trip data to analyse and forecast ho
 The dashboard includes a **PDF export feature** that generates a full visual report containing:
 
 ### ✅ What’s Inside the PDF:
-- 📊 **Forecast vs Actual** plots for:
-  - XGBoost
-  - Random Forest
-  - Ensemble Models
-- 🕒 **Time Series Insights**:
-  - Train-Test Split
-  - Seasonal Decomposition
-- 🧠 **SHAP Explainability**:
-  - Feature importance visualised using SHAP summary plots
-- 📝 **Automatic Plot Descriptions**:
-  - A descriptive interpretation accompanies each graph
-- 📄 **Page Footer**:
-  - Dynamic footer showing `Page X of Y` on every page
+
+| Column                      | Description                    |
+|-----------------------------|--------------------------------|
+| `📊 **Forecast vs Actual**` |- XGBoost                       |
+|                             |- Random Forest                 |
+|                             |- Ensemble Models               |
+|`🕒 **Time Series Insights**`|- Train-Test Split              |
+|                             |- Seasonal Decomposition        |
+|`🧠 **SHAP Explainability**` |-Feature importance visualised  |
+|                             |using SHAP summary plots        |
+| `📝 **Plot Descriptions**`  |- A descriptive interpretation  | 
+|                             |accompanies each graph          |
+| `📄 **Page Footer**`        |-Dynamic footer showing         |
+|                             |`Page X of Y` on every page    |
 
 ---
+
 
 ## 👨‍💻 Author
 
@@ -116,3 +118,6 @@ The dashboard includes a **PDF export feature** that generates a full visual rep
 *Built with ❤️ using FastAPI, XGBoost, SHAP, and Plotly*
 
 ---
+## 🪪 Collaborate with us:
+[🪪**LinkedIn**](https://www.linkedin.com/in/jayanth-chennoju-5a738923k/)
+[📨**Gmail ID**](jayanthchennoju@gmail.com)
