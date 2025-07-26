@@ -486,14 +486,14 @@ def export_pdf():
                 pdf.ln(110)
                 desc = plot_descriptions.get(filename, "Description not available.")
                 pdf.set_font("Arial", size=11)
-                pdf.multi_cell(0, 10, f"📌 {desc}")
+                pdf.multi_cell(0, 10, f"{desc}")
             except RuntimeError:
                 pdf.set_font("Arial", size=12)
-                pdf.cell(200, 10, txt=f"⚠️ Error loading image: {filename}", ln=True, align="C")
+                pdf.cell(200, 10, txt=f" Error loading image: {filename}", ln=True, align="C")
         else:
             missing_plots.append(filename)
             pdf.set_font("Arial", size=12)
-            pdf.cell(200, 10, txt=f"⚠️ {filename} not found. Please generate it.", ln=True, align="C")
+            pdf.cell(200, 10, txt=f"{filename} not found. Please generate it.", ln=True, align="C")
 
     out_path = "plots/uber_dashboard_report.pdf"
     pdf.output(out_path)
