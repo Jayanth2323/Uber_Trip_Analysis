@@ -229,8 +229,78 @@ def serve_plot(plot_name: str):
         status_code=404, content={"error": f"Plot {plot_name} not found."}
     )
 
+# @app.get("/export/pdf")
+# def export_pdf():
+#     pdf = FPDF()
+#     pdf.set_auto_page_break(auto=True, margin=15)
+
+#     # 📄 Cover Page
+#     pdf.add_page()
+#     pdf.set_font("Helvetica", "B", 16)
+#     pdf.cell(200, 10, txt="Uber Trip Forecasting - Plots Summary", ln=True, align="C")
+#     pdf.set_font("Helvetica", size=12)
+#     pdf.ln(10)
+#     pdf.cell(200, 10, txt=f"Generated on: {datetime.now():%Y-%m-%d %H:%M:%S}", ln=True, align="C")
+#     pdf.ln(20)
+
+#     # 📊 Plots to include (based on your repo structure)
+#     plots_with_desc = [
+#         ("XGBoost vs Actual", "xgb_vs_actual.png", "Predicted vs actual trip counts using XGBoost model."),
+#         ("Random Forest vs Actual", "rf_vs_actual.png", "Forecast comparison using Random Forest model."),
+#         ("Ensemble vs Actual", "ensemble_vs_actual.png", "Combined predictions from multiple models."),
+#         ("Trips per Hour", "trips_per_hour.png", "Hourly distribution of Uber trips."),
+#         ("Trips per Day", "trips_per_day.png", "Daily volume of Uber rides."),
+#         ("Train-Test Split", "train_test_split.png", "Dataset partitioning for model training and evaluation."),
+#         ("Time Series Decomposition", "decomposition.png", "Trend, seasonality, and residuals in trip data."),
+#         ("SHAP Summary", "shap_summary.png", "Feature impact visualization using SHAP values."),
+#     ]
+
+#     missing = []
+
+#     for title, filename, description in plots_with_desc:
+#         path = os.path.join("plots", filename)
+#         if os.path.exists(path):
+#             pdf.add_page()
+#             pdf.set_font("Helvetica", "B", 14)
+#             pdf.cell(200, 10, txt=title, ln=True, align="C")
+#             pdf.set_font("Helvetica", size=11)
+#             pdf.multi_cell(0, 8, description, align="C")
+#             pdf.ln(5)
+#             try:
+#                 pdf.image(path, x=10, y=40, w=180)
+#             except RuntimeError as e:
+#                 pdf.set_font("Helvetica", size=11)
+#                 pdf.ln(10)
+#                 pdf.cell(200, 10, txt=f"⚠️ Error loading {filename}", ln=True, align="C")
+#                 missing.append(filename)
+#         else:
+#             pdf.add_page()
+#             pdf.set_font("Helvetica", "B", 14)
+#             pdf.cell(200, 10, txt=title, ln=True, align="C")
+#             pdf.set_font("Helvetica", size=11)
+#             pdf.cell(200, 10, txt=f"⚠️ {filename} not found. Please generate it.", ln=True, align="C")
+#             missing.append(filename)
+
+#     output_path = "plots/uber_dashboard_report.pdf"
+#     try:
+#         pdf.output(output_path)
+#     except Exception as e:
+#         from fastapi import HTTPException
+#         raise HTTPException(status_code=500, detail=f"PDF generation failed: {str(e)}")
+
+#     if not os.path.exists(output_path):
+#         raise HTTPException(status_code=500, detail="PDF file was not created.")
+
+#     return FileResponse(
+#         path=out_path,
+#         media_type="application/pdf",
+#         filename="uber_dashboard_report.pdf"
+#     )
+
 @app.get("/export/pdf")
 def export_pdf():
+    from datetime import datetime
+
     pdf = FPDF()
     pdf.set_auto_page_break(auto=True, margin=15)
 
@@ -243,7 +313,7 @@ def export_pdf():
     pdf.cell(200, 10, txt=f"Generated on: {datetime.now():%Y-%m-%d %H:%M:%S}", ln=True, align="C")
     pdf.ln(20)
 
-    # 📊 Plots to include (based on your repo structure)
+    # Plot titles and their descriptions
     plots_with_desc = [
         ("XGBoost vs Actual", "xgb_vs_actual.png", "Predicted vs actual trip counts using XGBoost model."),
         ("Random Forest vs Actual", "rf_vs_actual.png", "Forecast comparison using Random Forest model."),
@@ -281,14 +351,13 @@ def export_pdf():
             pdf.cell(200, 10, txt=f"⚠️ {filename} not found. Please generate it.", ln=True, align="C")
             missing.append(filename)
 
-    output_path = "plots/uber_dashboard_report.pdf"
+    out_path = "plots/uber_dashboard_report.pdf"
     try:
-        pdf.output(output_path)
+        pdf.output(out_path)
     except Exception as e:
-        from fastapi import HTTPException
         raise HTTPException(status_code=500, detail=f"PDF generation failed: {str(e)}")
 
-    if not os.path.exists(output_path):
+    if not os.path.exists(out_path):
         raise HTTPException(status_code=500, detail="PDF file was not created.")
 
     return FileResponse(
