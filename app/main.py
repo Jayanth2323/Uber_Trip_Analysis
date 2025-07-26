@@ -376,7 +376,7 @@ def export_pdf():
     # Cover Page
     pdf.add_page()
     pdf.set_font("Arial", "B", 18)
-    pdf.cell(200, 10, txt="📊 Uber Trip Forecasting - Plots Summary", ln=True, align="C")
+    pdf.cell(200, 10, txt="Uber Trip Forecasting - Plots Summary", ln=True, align="C")
     pdf.set_font("Arial", size=12)
     pdf.ln(10)
     pdf.cell(200, 10, txt=f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", ln=True, align="C")
