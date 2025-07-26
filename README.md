@@ -87,6 +87,7 @@ This project leverages historical Uber FOIL trip data to analyse and forecast ho
   "active_vehicles": 4100
 }
 
+---
 # 📄 PDF Export – Uber Trip Forecasting Dashboard
 
 The dashboard includes a **PDF export feature** that generates a full visual report containing:
@@ -112,3 +113,5 @@ The dashboard includes a **PDF export feature** that generates a full visual rep
 
 **Jayanth Chennoju**  
 *Built with ❤️ using FastAPI, XGBoost, SHAP, and Plotly*
+
+---
