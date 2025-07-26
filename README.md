@@ -86,6 +86,7 @@ This project leverages historical Uber FOIL trip data to analyse and forecast ho
   "month": 5,
   "active_vehicles": 4100
 }
+```
 
 ---
 # 📄 PDF Export – Uber Trip Forecasting Dashboard
