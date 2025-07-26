@@ -95,19 +95,19 @@ The dashboard includes a **PDF export feature** that generates a full visual rep
 
 ### ✅ What’s Inside the PDF:
 
-| Column                      | Description                    |
-|-----------------------------|--------------------------------|
-| `📊 **Forecast vs Actual**` |- XGBoost                       |
-|                             |- Random Forest                 |
-|                             |- Ensemble Models               |
-|`🕒 **Time Series Insights**`|- Train-Test Split              |
-|                             |- Seasonal Decomposition        |
-|`🧠 **SHAP Explainability**` |-Feature importance visualised  |
-|                             |using SHAP summary plots        |
-| `📝 **Plot Descriptions**`  |- A descriptive interpretation  | 
-|                             |accompanies each graph          |
-| `📄 **Page Footer**`        |-Dynamic footer showing         |
-|                             |`Page X of Y` on every page    |
+| Column                   | Description                    |
+|--------------------------|--------------------------------|
+| `📊 Forecast vs Actual`  |- XGBoost                       |
+|                          |- Random Forest                 |
+|                          |- Ensemble Models               |
+| `🕒 Time Series Insights`|- Train-Test Split              |
+|                          |- Seasonal Decomposition        |
+| `🧠 SHAP Explainability` |-Feature importance visualised  |
+|                          |using SHAP summary plots        |
+| `📝 Plot Descriptions`   |- A descriptive interpretation  | 
+|                          |accompanies each graph          |
+| `📄 Page Footer`         |-Dynamic footer showing         |
+|                          |` Page X of Y` on every page    |
 
 ---
 
@@ -120,6 +120,6 @@ The dashboard includes a **PDF export feature** that generates a full visual rep
 ---
 ## 🪪 Collaborate with us:
 
-[**🪪LinkedIn**](https://www.linkedin.com/in/jayanth-chennoju-5a738923k/),
+[**🪪LinkedIn**](https://www.linkedin.com/in/jayanth-chennoju-5a738923k/)
 
 [**📨Gmail ID**](jayanthchennoju@gmail.com)
