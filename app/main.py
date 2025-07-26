@@ -9,6 +9,7 @@ from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fpdf import FPDF
 from string import Template
 from datetime import datetime
+from PIL import Image
 
 app = FastAPI(
     title="Uber Trip Forecasting API",
@@ -229,226 +230,33 @@ def serve_plot(plot_name: str):
         status_code=404, content={"error": f"Plot {plot_name} not found."}
     )
 
-# @app.get("/export/pdf")
-# def export_pdf():
-#     pdf = FPDF()
-#     pdf.set_auto_page_break(auto=True, margin=15)
-
-#     # 📄 Cover Page
-#     pdf.add_page()
-#     pdf.set_font("Helvetica", "B", 16)
-#     pdf.cell(200, 10, txt="Uber Trip Forecasting - Plots Summary", ln=True, align="C")
-#     pdf.set_font("Helvetica", size=12)
-#     pdf.ln(10)
-#     pdf.cell(200, 10, txt=f"Generated on: {datetime.now():%Y-%m-%d %H:%M:%S}", ln=True, align="C")
-#     pdf.ln(20)
-
-#     # 📊 Plots to include (based on your repo structure)
-#     plots_with_desc = [
-#         ("XGBoost vs Actual", "xgb_vs_actual.png", "Predicted vs actual trip counts using XGBoost model."),
-#         ("Random Forest vs Actual", "rf_vs_actual.png", "Forecast comparison using Random Forest model."),
-#         ("Ensemble vs Actual", "ensemble_vs_actual.png", "Combined predictions from multiple models."),
-#         ("Trips per Hour", "trips_per_hour.png", "Hourly distribution of Uber trips."),
-#         ("Trips per Day", "trips_per_day.png", "Daily volume of Uber rides."),
-#         ("Train-Test Split", "train_test_split.png", "Dataset partitioning for model training and evaluation."),
-#         ("Time Series Decomposition", "decomposition.png", "Trend, seasonality, and residuals in trip data."),
-#         ("SHAP Summary", "shap_summary.png", "Feature impact visualization using SHAP values."),
-#     ]
-
-#     missing = []
-
-#     for title, filename, description in plots_with_desc:
-#         path = os.path.join("plots", filename)
-#         if os.path.exists(path):
-#             pdf.add_page()
-#             pdf.set_font("Helvetica", "B", 14)
-#             pdf.cell(200, 10, txt=title, ln=True, align="C")
-#             pdf.set_font("Helvetica", size=11)
-#             pdf.multi_cell(0, 8, description, align="C")
-#             pdf.ln(5)
-#             try:
-#                 pdf.image(path, x=10, y=40, w=180)
-#             except RuntimeError as e:
-#                 pdf.set_font("Helvetica", size=11)
-#                 pdf.ln(10)
-#                 pdf.cell(200, 10, txt=f"⚠️ Error loading {filename}", ln=True, align="C")
-#                 missing.append(filename)
-#         else:
-#             pdf.add_page()
-#             pdf.set_font("Helvetica", "B", 14)
-#             pdf.cell(200, 10, txt=title, ln=True, align="C")
-#             pdf.set_font("Helvetica", size=11)
-#             pdf.cell(200, 10, txt=f"⚠️ {filename} not found. Please generate it.", ln=True, align="C")
-#             missing.append(filename)
-
-#     output_path = "plots/uber_dashboard_report.pdf"
-#     try:
-#         pdf.output(output_path)
-#     except Exception as e:
-#         from fastapi import HTTPException
-#         raise HTTPException(status_code=500, detail=f"PDF generation failed: {str(e)}")
-
-#     if not os.path.exists(output_path):
-#         raise HTTPException(status_code=500, detail="PDF file was not created.")
-
-#     return FileResponse(
-#         path=out_path,
-#         media_type="application/pdf",
-#         filename="uber_dashboard_report.pdf"
-#     )
-
-# @app.get("/export/pdf")
-# def export_pdf():
-#     from datetime import datetime
-
-#     pdf = FPDF()
-#     pdf.set_auto_page_break(auto=True, margin=15)
-
-#     # 📄 Cover Page
-#     pdf.add_page()
-#     pdf.set_font("Helvetica", "B", 16)
-#     pdf.cell(200, 10, txt="Uber Trip Forecasting - Plots Summary", ln=True, align="C")
-#     pdf.set_font("Helvetica", size=12)
-#     pdf.ln(10)
-#     pdf.cell(200, 10, txt=f"Generated on: {datetime.now():%Y-%m-%d %H:%M:%S}", ln=True, align="C")
-#     pdf.ln(20)
-
-#     # Plot titles and their descriptions
-#     plots_with_desc = [
-#         ("XGBoost vs Actual", "xgb_vs_actual.png", "Predicted vs actual trip counts using XGBoost model."),
-#         ("Random Forest vs Actual", "rf_vs_actual.png", "Forecast comparison using Random Forest model."),
-#         ("Ensemble vs Actual", "ensemble_vs_actual.png", "Combined predictions from multiple models."),
-#         ("Trips per Hour", "trips_per_hour.png", "Hourly distribution of Uber trips."),
-#         ("Trips per Day", "trips_per_day.png", "Daily volume of Uber rides."),
-#         ("Train-Test Split", "train_test_split.png", "Dataset partitioning for model training and evaluation."),
-#         ("Time Series Decomposition", "decomposition.png", "Trend, seasonality, and residuals in trip data."),
-#         ("SHAP Summary", "shap_summary.png", "Feature impact visualization using SHAP values."),
-#     ]
-
-#     missing = []
-
-#     for title, filename, description in plots_with_desc:
-#         path = os.path.join("plots", filename)
-#         if os.path.exists(path):
-#             pdf.add_page()
-#             pdf.set_font("Helvetica", "B", 14)
-#             pdf.cell(200, 10, txt=title, ln=True, align="C")
-#             pdf.set_font("Helvetica", size=11)
-#             pdf.multi_cell(0, 8, description, align="C")
-#             pdf.ln(5)
-#             try:
-#                 pdf.image(path, x=10, y=40, w=180)
-#             except RuntimeError as e:
-#                 pdf.set_font("Helvetica", size=11)
-#                 pdf.ln(10)
-#                 pdf.cell(200, 10, txt=f"⚠️ Error loading {filename}", ln=True, align="C")
-#                 missing.append(filename)
-#         else:
-#             pdf.add_page()
-#             pdf.set_font("Helvetica", "B", 14)
-#             pdf.cell(200, 10, txt=title, ln=True, align="C")
-#             pdf.set_font("Helvetica", size=11)
-#             pdf.cell(200, 10, txt=f"⚠️ {filename} not found. Please generate it.", ln=True, align="C")
-#             missing.append(filename)
-
-#     out_path = "plots/uber_dashboard_report.pdf"
-#     try:
-#         pdf.output(out_path)
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=f"PDF generation failed: {str(e)}")
-
-#     if not os.path.exists(out_path):
-#         raise HTTPException(status_code=500, detail="PDF file was not created.")
-
-#     return FileResponse(
-#         path=out_path,
-#         media_type="application/pdf",
-#         filename="uber_dashboard_report.pdf"
-#     )
-
-# @app.get("/export/pdf")
-# def export_pdf():
-#     from datetime import datetime
-
-#     pdf = FPDF()
-#     pdf.set_auto_page_break(auto=True, margin=15)
-
-#     # Cover Page
-#     pdf.add_page()
-#     pdf.set_font("Arial", "B", 18)
-#     pdf.cell(200, 10, txt="Uber Trip Forecasting - Plots Summary", ln=True, align="C")
-#     pdf.set_font("Arial", size=12)
-#     pdf.ln(10)
-#     pdf.cell(200, 10, txt=f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", ln=True, align="C")
-#     pdf.ln(20)
-
-#     # Plots + Descriptions
-#     plots = [
-#         ("XGBoost vs Actual", "xgb_vs_actual.png", "Predicted vs actual trip counts using XGBoost model."),
-#         ("Random Forest vs Actual", "rf_vs_actual.png", "Forecast comparison using Random Forest model."),
-#         ("Ensemble vs Actual", "ensemble_vs_actual.png", "Combined predictions from multiple models."),
-#         ("Trips per Hour", "trips_per_hour.png", "Hourly distribution of Uber trips across different times of the day."),
-#         ("Trips per Day", "trips_per_day.png", "Daily volume of Uber rides showing weekday trends."),
-#         ("Train-Test Split", "train_test_split.png", "Dataset split for training and validating model accuracy."),
-#         ("Time Series Decomposition", "decomposition.png", "Breakdown of trend, seasonality, and residuals."),
-#         ("SHAP Summary", "shap_summary.png", "Feature impact visualization using SHAP values."),
-#     ]
-
-#     for title, file, desc in plots:
-#         path = os.path.join("plots", file)
-#         pdf.add_page()
-#         pdf.set_font("Arial", "B", 14)
-#         pdf.cell(200, 10, txt=title, ln=True, align="C")
-#         if os.path.exists(path):
-#             try:
-#                 pdf.image(path, x=15, y=30, w=180)
-#                 pdf.ln(100)  # adjust spacing after image
-#             except Exception as e:
-#                 pdf.ln(20)
-#                 pdf.set_font("Arial", size=12)
-#                 pdf.cell(200, 10, txt=f"⚠️ Failed to load {file}", ln=True, align="C")
-#         else:
-#             pdf.ln(20)
-#             pdf.set_font("Arial", size=12)
-#             pdf.cell(200, 10, txt=f"⚠️ {file} not found", ln=True, align="C")
-
-#         pdf.ln(85)  # space before description
-#         pdf.set_font("Arial", size=11)
-#         pdf.multi_cell(0, 10, desc, align="C")
-
-#     out_path = "plots/uber_dashboard_report.pdf"
-#     pdf.output(out_path)
-
-#     return FileResponse(
-#         out_path,
-#         media_type="application/pdf",
-#         filename="uber_dashboard_report.pdf"
-#     )
-
 @app.get("/export/pdf")
 def export_pdf():
     class PDF(FPDF):
         def footer(self):
             self.set_y(-15)
             self.set_font("Arial", "I", 8)
-            self.cell(0, 10, f"Page {self.page_no()} of {{nb}}", align="C")
-
+            self.cell(0, 10, f"Page {self.page_no()} of " + str(self.alias_nb_pages()), align="C")
     pdf = PDF()
     pdf.alias_nb_pages()
     pdf.set_auto_page_break(auto=True, margin=15)
 
-    # Cover page
+    # Cover Page
     pdf.add_page()
     pdf.set_font("Arial", "B", 16)
-    pdf.cell(200, 10, txt=" Uber Trip Forecasting - Plots Summary", ln=True, align="C")
+    pdf.cell(200, 10, txt="Uber Trip Forecasting - Plots Summary", ln=True, align="C")
     pdf.set_font("Arial", size=12)
     pdf.ln(10)
     pdf.cell(200, 10, txt=f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", ln=True, align="C")
     pdf.ln(10)
-    pdf.multi_cell(0, 10, "This report provides a visual summary of Uber trip forecasting results, exploration insights, time series components, and explainability of model predictions.")
-    pdf.ln(10)
+    pdf.multi_cell(0, 10,
+        "This report provides a comprehensive summary of Uber trip forecasting results using multiple ML models, "
+        "exploratory trends by time, time series decomposition, and model explainability with SHAP. "
+        "These insights are crucial for operations, scheduling, and understanding prediction drivers."
+    )
+    pdf.ln(5)
 
-    # Plot metadata
+    # Plot Titles + Descriptions
     plot_images = [
         ("XGBoost vs Actual", "xgb_vs_actual.png"),
         ("Random Forest vs Actual", "rf_vs_actual.png"),
@@ -461,46 +269,45 @@ def export_pdf():
     ]
 
     plot_descriptions = {
-        "xgb_vs_actual.png": "Comparison of predicted vs actual trip counts using the XGBoost model. This highlights the model's predictive accuracy.",
-        "rf_vs_actual.png": "Random Forest model predictions plotted against actual trip values to assess its performance visually.",
-        "ensemble_vs_actual.png": "Ensemble model combining predictions from multiple models to improve accuracy.",
-        "trips_per_hour.png": "Distribution of trip counts per hour indicating peak and off-peak ride times.",
-        "trips_per_day.png": "Trip frequency across days helps identify weekly patterns or anomalies.",
-        "train_test_split.png": "Time-based train-test data split for model training and evaluation.",
-        "decomposition.png": "Seasonal decomposition of time series into trend, seasonal, and residual components.",
-        "shap_summary.png": "SHAP summary plot shows the importance of each feature in model decision making.",
+        "xgb_vs_actual.png": "This plot compares the XGBoost model's predicted trip counts against actual observed values...",
+        "rf_vs_actual.png": "The Random Forest model's predictions are shown against actual trip counts...",
+        "ensemble_vs_actual.png": "This graph presents the performance of an ensemble model...",
+        "trips_per_hour.png": "Hourly trip patterns reveal how Uber demand fluctuates across a 24-hour period...",
+        "trips_per_day.png": "This visualization shows trip volume for each day...",
+        "train_test_split.png": "Shows how data was split chronologically into training and testing sets...",
+        "decomposition.png": "A time-series decomposition into trend, seasonality, and residual components...",
+        "shap_summary.png": "This SHAP plot highlights the influence of each feature on the models predictions..."
     }
 
-    missing_plots = []
-
     for title, filename in plot_images:
-        path = os.path.join("plots", filename)
         pdf.add_page()
         pdf.set_font("Arial", "B", 14)
         pdf.cell(200, 10, txt=title, ln=True, align="C")
         pdf.ln(5)
 
+        path = os.path.join("plots", filename)
         if os.path.exists(path):
             try:
-                pdf.image(path, x=15, y=30, w=180)
-                pdf.ln(110)
+                with Image.open(path) as im:
+                    w, h = im.size
+                    aspect = h / w
+                    img_w = 180  # mm
+                    img_h = img_w * aspect
+                pdf.image(path, x=15, y=30, w=img_w, h=img_h)
+                pdf.set_y(30 + img_h + 8)  # Place description below image
                 desc = plot_descriptions.get(filename, "Description not available.")
                 pdf.set_font("Arial", size=11)
-                pdf.multi_cell(0, 10, f"{desc}")
+                pdf.multi_cell(0, 8, desc)
             except RuntimeError:
                 pdf.set_font("Arial", size=12)
-                pdf.cell(200, 10, txt=f" Error loading image: {filename}", ln=True, align="C")
+                pdf.cell(200, 10, txt=f"Error loading {filename}", ln=True, align="C")
         else:
-            missing_plots.append(filename)
-            pdf.set_font("Arial", size=12)
+            try:
+                pdf.set_font("Arial", size=12)
+            except:
+                pdf.set_font("Helvetica", size=12)
             pdf.cell(200, 10, txt=f"{filename} not found. Please generate it.", ln=True, align="C")
 
     out_path = "plots/uber_dashboard_report.pdf"
     pdf.output(out_path)
-
-    if missing_plots:
-        print("⚠️ Missing plots:")
-        for p in missing_plots:
-            print(f"   - {p}")
-
     return FileResponse(out_path, media_type="application/pdf", filename="uber_dashboard_report.pdf")
