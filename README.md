@@ -1,73 +1,83 @@
 # 🚕 Uber Trip Demand Forecasting – NYC (FOIL Dataset)
 
-**Forecasting hourly Uber trip counts using ML models like XGBoost, Random Forest, GBRT, and an Ensemble.**
+Forecasting hourly Uber trip demand using ML models like **XGBoost, Random Forest, GBRT**, and a custom **Ensemble**, built with full deployment support via FastAPI.
 
 ---
 
 ## 📌 Project Overview
 
-This project analyzes and predicts Uber trip demand using historical data collected via the NYC Taxi and Limousine Commission (TLC) FOIL release.
+This project leverages historical Uber FOIL trip data to analyse and forecast hourly demand in NYC. It features:
 
-We focus on:
-- Exploratory data analysis (EDA)
-- Feature engineering (including time-lag features)
-- Model training (XGBoost, Random Forest, GBRT)
-- Ensemble prediction
-- Deployment as a FastAPI-based prediction service
+- 📊 Exploratory Data Analysis (EDA)
+- 🛠️ Feature Engineering (incl. lag features)
+- 🤖 Model Training & Tuning:
+  - XGBoost
+  - Random Forest
+  - Gradient Boosted Trees (GBRT)
+  - Weighted Ensemble
+- 🚀 Deployment using FastAPI
+
+---
+
+## 📂 Dataset Information
+
+**Source:** [NYC TLC FOIL via FiveThirtyEight](https://github.com/fivethirtyeight/uber-tlc-foil-response)  
+**Timeframe:**  
+- April–September 2014  
+- January–June 2015  
+
+| Column      | Description                    |
+|-------------|--------------------------------|
+| `Date/Time` | Timestamp of pickup            |
+| `Lat`, `Lon`| Pickup location (coordinates)  |
+| `Base`      | Uber dispatching base ID       |
 
 ---
 
 ## 🛠️ Tools & Technologies
 
-- **Languages:** Python
-- **Libraries:** Pandas, NumPy, Matplotlib, Seaborn, Scikit-learn, XGBoost, SHAP, Statsmodels
-- **API:** FastAPI
-- **IDE:** VS Code, Jupyter Notebook
-- **Deployment Ready:** Docker, Uvicorn
+- **Language:** Python 3
+- **Core Libraries:**  
+  `Pandas`, `NumPy`, `Matplotlib`, `Seaborn`, `Scikit-learn`, `XGBoost`, `SHAP`, `Statsmodels`
+- **API & Deployment:**  
+  `FastAPI`, `Uvicorn`, `Docker`
+- **Environment:**  
+  `Jupyter Notebook`, `VS Code`
 
 ---
 
-## 📂 Dataset Info
+## 📈 Machine Learning Models & Performance
 
-> **Uber FOIL Trip Data**  
-NYC Uber pickups from April–September 2014 & January–June 2015  
-Data Source: [NYC TLC + FiveThirtyEight](https://github.com/fivethirtyeight/uber-tlc-foil-response)
+| Model             | Description                            | MAPE (%) |
+|------------------|----------------------------------------|----------|
+| 🧠 **XGBoost**     | Boosted decision tree regressor         | 8.37     |
+| 🌲 **Random Forest** | Bagging ensemble of decision trees      | 9.61     |
+| 📉 **GBRT**        | Gradient Boosted Regression Trees       | 10.02    |
+| 🤝 **Ensemble**    | Weighted average (based on inverse MAPE)| 8.60     |
 
-| Column | Description |
-|--------|-------------|
-| Date/Time | Pickup timestamp |
-| Lat, Lon | Pickup coordinates |
-| Base | Uber dispatching base ID |
-
----
-
-## 📈 Machine Learning Models
-
-| Model           | Description                          | MAPE (%) |
-|----------------|--------------------------------------|----------|
-| **XGBoost**     | Tree-based boosting regressor         | 8.37     |
-| **Random Forest** | Ensemble of decision trees            | 9.61     |
-| **GBRT**        | Gradient Boosted Regression Trees     | 10.02    |
-| **Ensemble**    | Weighted average based on inverse MAPE | 8.60     |
-
-✅ TimeSeriesSplit + GridSearchCV used for hyperparameter tuning  
-✅ Feature engineering includes hourly resampling and 24-hour lag features
+✅ **Cross-validation:** `TimeSeriesSplit`  
+✅ **Tuning:** `GridSearchCV`  
+✅ **Features:** Hourly resampling, 24-hour lag, day-of-week & month
 
 ---
-## API (FastAPI)
 
-[![API](https://img.shields.io/badge/Live-Render-success?style=for-the-badge&logo=fastapi)](https://uber-trip-analysis.onrender.com)
+## 🚀 Live API Dashboard
+
+[![Live Render](https://img.shields.io/badge/Live-Dashboard-00c853?style=for-the-badge&logo=fastapi)](https://uber-trip-analysis.onrender.com)
+
+---
 
 ## 🔌 API Endpoints (FastAPI)
 
 | Method | Endpoint      | Description                        |
 |--------|---------------|------------------------------------|
-| GET    | `/`           | Root welcome message               |
-| GET    | `/health`     | Returns model load status          |
-| GET    | `/metrics`    | Returns MAPE scores for all models |
-| POST   | `/predict`    | Predicts hourly Uber trips         |
+| `GET`  | `/`           | Returns interactive dashboard      |
+| `GET`  | `/health`     | Model load status                  |
+| `GET`  | `/metrics`    | MAPE scores for all models         |
+| `POST` | `/predict`    | Predicts hourly Uber trip counts   |
 
-### 🔧 Example POST `/predict`
+### 🔧 Sample POST `/predict` Request
+
 ```json
 {
   "hour": 14,
@@ -76,3 +86,29 @@ Data Source: [NYC TLC + FiveThirtyEight](https://github.com/fivethirtyeight/uber
   "month": 5,
   "active_vehicles": 4100
 }
+
+# 📄 PDF Export – Uber Trip Forecasting Dashboard
+
+The dashboard includes a **PDF export feature** that generates a full visual report containing:
+
+### ✅ What’s Inside the PDF:
+- 📊 **Forecast vs Actual** plots for:
+  - XGBoost
+  - Random Forest
+  - Ensemble Models
+- 🕒 **Time Series Insights**:
+  - Train-Test Split
+  - Seasonal Decomposition
+- 🧠 **SHAP Explainability**:
+  - Feature importance visualised using SHAP summary plots
+- 📝 **Automatic Plot Descriptions**:
+  - A descriptive interpretation accompanies each graph
+- 📄 **Page Footer**:
+  - Dynamic footer showing `Page X of Y` on every page
+
+---
+
+## 👨‍💻 Author
+
+**Jayanth Chennoju**  
+*Built with ❤️ using FastAPI, XGBoost, SHAP, and Plotly*
