@@ -120,6 +120,6 @@ The dashboard includes a **PDF export feature** that generates a full visual rep
 ---
 ## 🤝 Connect with Me
 
-- [**LinkedIn Profile**](https://www.linkedin.com/in/jayanth-chennoju-5a738923k/)
+- [**🪪LinkedIn Profile**](https://www.linkedin.com/in/jayanth-chennoju-5a738923k/)
   
-- [**Email**](mailto:jayanthchennoju@gmail.com)
+- [**📧Email**](mailto:jayanthchennoju@gmail.com)
