@@ -4,6 +4,45 @@ Forecasting hourly Uber trip demand using ML models like **XGBoost, Random Fores
 
 ---
 
+---
+
+## 📂 Project Structure
+
+```
+Uber_Trip_Analysis/
+│
+├── data/
+│   ├── raw/                     # Original FOIL dataset (e.g., Uber-Jan-Feb-FOIL.csv)
+│   ├── processed/               # Cleaned & preprocessed datasets
+│   └── external/                # Any additional or reference datasets
+│
+├── scripts/
+│   ├── data_preprocessing.py    # Data loading and preprocessing
+│   ├── eda_visuals.py           # EDA visualizations and reusable plotting scripts
+│   ├── feature_engineering.py   # Feature extraction and transformations
+│   └── model_training.py        # Model training, evaluation, and metrics
+│
+├── app/
+│   ├── main.py                  # Entry point for Streamlit/FastAPI/Gradio
+│   ├── utils.py                 # Helper functions and configurations
+│   └── config.py                # Global configuration (paths, constants, etc.)
+│
+├── tests/
+│   ├── test_data_pipeline.py    # Tests for data preprocessing pipeline
+│   └── test_model.py            # Tests for model functionality
+│
+├── reports/
+│   ├── figures/                 # Exported charts, plots, and visual assets
+│   └── summary.pdf              # Project report (if any)
+│
+├── requirements.txt             # Python dependencies
+├── environment.yml              # Conda environment file (optional)
+├── Dockerfile                   # For containerization (if required)
+├── .gitignore                   # Files/folders ignored in Git
+├── README.md                    # Project documentation
+└── LICENSE                      # License file
+```
+
 ## 📌 Project Overview
 
 This project leverages historical Uber FOIL trip data to analyse and forecast hourly demand in NYC. It features:
@@ -31,6 +70,25 @@ This project leverages historical Uber FOIL trip data to analyse and forecast ho
 | `Date/Time` | Timestamp of pickup            |
 | `Lat`, `Lon`| Pickup location (coordinates)  |
 | `Base`      | Uber dispatching base ID       |
+
+---
+## ⚙️ Installation
+
+Clone the repository and set up your environment:
+
+```bash
+# Clone the repository
+git clone https://github.com/Jayanth2323/Uber_Trip_Analysis.git
+cd Uber_Trip_Analysis
+
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate   # For Linux/Mac
+venv\Scripts\activate      # For Windows
+
+# Install dependencies
+pip install -r requirements.txt
+```
 
 ---
 
@@ -120,6 +178,8 @@ The dashboard includes a **PDF export feature** that generates a full visual rep
 ---
 ## 🤝 Connect with Me
 
-- [**🪪LinkedIn Profile**](https://www.linkedin.com/in/jayanth-chennoju-5a738923k/)
-  
-- [**📧Email**](mailto:jayanthchennoju@gmail.com)
+**GitHub** — [Jayanth2323](https://github.com/Jayanth2323).
+
+**LinkedIn** — [**🪪-Jayanth Chennoju**](https://linkedin.com/in/jayanth-chennoju-5a738923k/).
+
+**Gmail** — [**📧Mailto**](mailto:jayanthchennoju@gmail.com)
