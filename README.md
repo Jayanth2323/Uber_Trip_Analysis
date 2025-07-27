@@ -118,8 +118,8 @@ The dashboard includes a **PDF export feature** that generates a full visual rep
 *Built with ❤️ using FastAPI, XGBoost, SHAP, and Plotly*
 
 ---
-## 🪪 Collaborate with us:
+## 🤝 Connect with Me
 
-[**🪪LinkedIn**](https://www.linkedin.com/in/jayanth-chennoju-5a738923k/)
-
-[**📨Gmail ID**](jayanthchennoju@gmail.com)
+- [**LinkedIn Profile**](https://www.linkedin.com/in/jayanth-chennoju-5a738923k/)
+  
+- [**Email**](mailto:jayanthchennoju@gmail.com)
