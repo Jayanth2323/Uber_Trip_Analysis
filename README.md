@@ -4,8 +4,6 @@ Forecasting hourly Uber trip demand using ML models like **XGBoost, Random Fores
 
 ---
 
----
-
 ## 📂 Project Structure
 
 ```
