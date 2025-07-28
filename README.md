@@ -119,7 +119,7 @@ pip install -r requirements.txt
 
 ## 🚀 Live API Dashboard
 
-[![Live Render](https://img.shields.io/badge/Live-Dashboard-00c853?style=for-the-badge&logo=fastapi)](https://uber-trip-analysis-7sbt.onrender.com)
+[![Live Render](https://img.shields.io/badge/Live-Dashboard-00c853?style=for-the-badge&logo=fastapi)](https://uber-trip-analysis-7sbt.onrender.com/)
 
 ---
 
